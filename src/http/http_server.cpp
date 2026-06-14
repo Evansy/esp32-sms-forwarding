@@ -7,6 +7,7 @@
 #include "controllers/soc.h"
 #include "controllers/wifi.h"
 #include "controllers/blacklist.h"
+#include "controllers/schedule.h"
 #include "controllers/ota.h"
 #include "controllers/logs.h"
 #include "config/config.h"
@@ -72,6 +73,13 @@ void HttpServer::setup(AsyncWebServer& server) {
     [](AsyncWebServerRequest* request) {},
     nullptr,
     blacklistPostController);
+
+  // Schedule API
+  server.on("/api/schedule", HTTP_GET, scheduleGetController);
+  server.on("/api/schedule", HTTP_POST,
+    [](AsyncWebServerRequest* request) {},
+    nullptr,
+    schedulePostController);
 
   // Configuration save
   server.on("/api/save", HTTP_POST, saveController);

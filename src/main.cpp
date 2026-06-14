@@ -16,6 +16,7 @@
 #include "push/push_queue.h"
 #include "http/http_server.h"
 #include "ota/ota_manager.h"
+#include "schedule/schedule.h"
 #include "coredump/coredump.h"
 #include <time.h>
 
@@ -98,6 +99,7 @@ void setup() {
   ConfigStore::load();
   Coredump::init();  // 断电重启时从 NVS 恢复崩溃时间估算
   ConfigStore::loadReboot(rebootSchedule);
+  ScheduleStore::load();
   esp_task_wdt_reset();
 
   Sim::init();
@@ -230,4 +232,5 @@ void loop() {
   }
 
   ConfigStore::rebootTick();
+  ScheduleStore::tick();
 }

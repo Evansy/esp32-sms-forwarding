@@ -1,5 +1,6 @@
 #include "config.h"
 #include "common/nvs_helper.h"
+#include "schedule/schedule.h"
 #include <Preferences.h>
 #include <ArduinoJson.h>
 #include "../logger/logger.h"
@@ -228,6 +229,7 @@ void ConfigStore::rebootTick() {
 void ConfigStore::reset() {
   Nvs::clearNamespace(kNvsSmsConfig);
   Nvs::clearNamespace(kNvsRebootCfg);
+  Nvs::clearNamespace("sms_sched");
 
   config = Config{};
   config.webUser   = DEFAULT_WEB_USER;
@@ -243,6 +245,12 @@ void ConfigStore::reset() {
   rebootSchedule = RebootSchedule{};
   rebootSchedule.hour      = 3;
   rebootSchedule.intervalH = 24;
+
+  // 重置定时短信 RAM 状态（NVS 已清除）
+  smsScheduleCount = 0;
+  for (int i = 0; i < MAX_SCHEDULED_SMS; i++) {
+    smsSchedules[i] = SmsSchedule{};
+  }
 
   LOG("CFG", "配置已重置为出厂默认值");
 }
