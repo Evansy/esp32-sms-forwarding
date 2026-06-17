@@ -1,216 +1,402 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>短信转发配置</title>
+<title>短信转发器 — 配置</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#eef2f7;color:#333;line-height:1.5}
-.container{max-width:560px;margin:0 auto;padding:0 16px 32px}
-h1{text-align:center;font-size:22px;padding:20px 0 4px;color:#2c3e50}
-h1 small{display:block;font-size:12px;color:#888;font-weight:400;margin-top:2px}
-.nav{display:flex;gap:8px;margin:12px 0 20px;background:#fff;border-radius:10px;padding:4px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.nav a{flex:1;text-align:center;padding:10px 0;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;color:#666;transition:all .2s}
-.nav a.active{background:#4caf50;color:#fff;box-shadow:0 2px 8px rgba(76,175,80,.3)}
-.nav a:not(.active):hover{background:#f0f0f0}
-.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.card-title{font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.status-bar{background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-radius:10px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;gap:8px;font-size:14px;color:#1565c0}
-.form-group{margin-bottom:14px}
-label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:4px}
-input[type="text"],input[type="password"],input[type="number"],textarea,select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;background:#fafbfc;transition:border-color .2s}
-input:focus,textarea:focus,select:focus{outline:none;border-color:#4caf50;background:#fff}
-textarea{resize:vertical;min-height:80px}
-.btn{display:block;width:100%;padding:12px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
-.btn-primary{background:#4caf50;color:#fff}
-.btn-primary:hover{background:#43a047}
-.btn-primary:disabled{background:#ccc;cursor:not-allowed}
-.btn-warn{background:#ff9800;color:#fff}
-.btn-warn:hover{background:#f57c00}
-.btn-danger{background:#f44336;color:#fff}
-.btn-danger:hover{background:#d32f2f}
-.btn-blue{background:#2196f3;color:#fff}
-.btn-blue:hover{background:#1976d2}
-.btn-gray{background:#607d8b;color:#fff}
-.btn-gray:hover{background:#546e7a}
-.btn-sm{padding:8px 14px;font-size:13px;width:auto;display:inline-block}
-.hint{font-size:12px;color:#888;margin-top:4px}
-.warn-box{background:#fff8e1;border-radius:8px;padding:12px;font-size:13px;color:#e65100;border-left:4px solid #ffc107;margin-bottom:14px}
-.error-box{background:#ffebee;border-radius:8px;padding:14px;color:#c62828;border-left:4px solid #f44336;margin-bottom:16px;display:none}
-.result-box{border-radius:8px;padding:10px 14px;font-size:14px;margin-top:8px;display:none}
-.result-success{background:#e8f5e9;color:#2e7d32;border-left:4px solid #4caf50}
-.result-error{background:#ffebee;color:#c62828;border-left:4px solid #f44336}
-.result-loading{background:#fff3e0;color:#e65100;border-left:4px solid #ff9800}
-/* iOS toggle */
-input[type="checkbox"]{-webkit-appearance:none;appearance:none;position:relative;width:44px;height:24px;background:#ccc;border-radius:12px;cursor:pointer;transition:background .25s;flex-shrink:0;vertical-align:middle}
-input[type="checkbox"]:checked{background:#4caf50}
-input[type="checkbox"]::before{content:'';position:absolute;width:18px;height:18px;background:#fff;border-radius:50%;top:3px;left:3px;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:left .25s}
-input[type="checkbox"]:checked::before{left:23px}
-label:has(>input[type="checkbox"]){display:flex;align-items:center;gap:10px;cursor:pointer;font-weight:400}
-/* Radio group */
-.radio-group{display:flex;gap:16px;margin:8px 0}
-.radio-group label{font-weight:400;display:flex;align-items:center;gap:4px}
-/* Push channel card */
-.push-channel{border:1px solid #e0e0e0;border-radius:10px;padding:12px;margin-bottom:12px;background:#fafbfc;transition:box-shadow .2s}
-.push-channel.enabled{border-color:#a5d6a7;box-shadow:0 0 0 2px rgba(76,175,80,.15)}
-.push-channel-header{display:flex;align-items:center;margin-bottom:8px}
-.push-channel-header label{margin:0;margin-left:8px;font-weight:700;font-size:14px}
-.push-channel-body{display:none}
-.push-channel.enabled .push-channel-body{display:block}
-.push-type-hint{font-size:12px;color:#555;margin-top:6px;padding:8px 10px;background:#f0f0f0;border-radius:6px}
-.inline-flex{display:flex;gap:8px;align-items:center}
-.inline-flex input{flex:1;margin:0}
-#mainContent{display:none}
-#loadingMsg{text-align:center;padding:40px 20px;color:#888;font-size:15px}
-.form-retry{display:flex;align-items:center;gap:10px}
-.form-retry label{margin:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#f5f5f5;color:#1e1e1e;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:540px;margin:0 auto;padding:0 16px 40px}
+
+/* Header */
+.hdr{padding:28px 0 20px}
+.hdr h1{font-size:20px;font-weight:600;letter-spacing:-.3px}
+.hdr p{font-size:12px;color:#999;margin-top:2px}
+
+/* Tab bar */
+.tabs{display:flex;gap:0;background:#fff;border:1px solid #e5e5e5;border-radius:8px;overflow:hidden;margin-bottom:20px}
+.tab{flex:1;padding:10px 0;text-align:center;font-size:13px;font-weight:500;color:#999;cursor:pointer;border:none;background:none;transition:all .15s}
+.tab:not(:last-child){border-right:1px solid #e5e5e5}
+.tab.act{color:#1a73e8;background:#f0f6ff;font-weight:600}
+.tab:hover:not(.act){background:#fafafa}
+
+/* Panels */
+.panel{display:none}
+.panel.vis{display:block}
+
+/* Cards */
+.card{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:16px 18px;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:600;color:#1e1e1e;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0f0}
+
+/* Form */
+.fg{margin-bottom:12px}
+.fg:last-child{margin-bottom:0}
+label.lbl{display:block;font-size:12px;font-weight:500;color:#666;margin-bottom:4px}
+input[type="text"],input[type="password"],input[type="number"],textarea,select{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;background:#fff;color:#1e1e1e;transition:border-color .15s;font-family:inherit}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#1a73e8}
+textarea{resize:vertical;min-height:72px}
+.hint{font-size:11px;color:#999;margin-top:3px}
+input[type="checkbox"]{-webkit-appearance:none;appearance:none;width:36px;height:20px;background:#ccc;border-radius:10px;cursor:pointer;transition:background .2s;flex-shrink:0;vertical-align:middle;position:relative;border:none}
+input[type="checkbox"]::before{content:'';position:absolute;width:16px;height:16px;background:#fff;border-radius:50%;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 2px rgba(0,0,0,.15)}
+input[type="checkbox"]:checked{background:#1a73e8}
+input[type="checkbox"]:checked::before{left:18px}
+label.chk{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:400;color:#1e1e1e;margin-bottom:10px}
+label.chk:last-child{margin-bottom:0}
+
+/* Buttons */
+.btn{display:block;width:100%;padding:10px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;font-family:inherit}
+.btn-p{background:#1a73e8;color:#fff}
+.btn-p:hover{background:#1557b0}
+.btn-p:disabled{background:#ccc;cursor:not-allowed}
+.btn-s{background:#fff;color:#1e1e1e;border:1px solid #ddd}
+.btn-s:hover{background:#f5f5f5}
+.btn-d{background:#fff;color:#d32f2f;border:1px solid #f5c6cb}
+.btn-d:hover{background:#fff5f5}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+.btn-row .btn{flex:1}
+
+/* Result */
+.res{border-radius:6px;padding:8px 12px;font-size:12px;margin-top:10px;display:none}
+.res.ok{display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
+.res.err{display:block;background:#ffebee;color:#c62828;border:1px solid #f5c6cb}
+
+/* Status bar */
+.status{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#666;display:flex;align-items:center;gap:6px}
+.status strong{color:#1e1e1e;font-weight:600}
+
+/* Push channels */
+.pch{border:1px solid #e5e5e5;border-radius:6px;padding:12px;margin-bottom:10px;background:#fafafa;transition:border-color .15s}
+.pch.on{border-color:#a5d6a7;background:#f6fbf6}
+.pch-hdr{display:flex;align-items:center;gap:8px;margin-bottom:0;cursor:pointer}
+.pch-hdr label.chk{margin:0;flex:1}
+.pch-del{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;transition:color .15s}
+.pch-del:hover{color:#d32f2f}
+.pch-body{display:none;margin-top:12px;padding-top:12px;border-top:1px solid #eee}
+.pch.on .pch-body{display:block}
+.type-hint{font-size:11px;color:#555;margin-top:6px;padding:8px 10px;background:#f0f0f0;border-radius:4px}
+
+/* Strategy */
+.seg{display:flex;gap:0;background:#fff;border:1px solid #ddd;border-radius:6px;overflow:hidden}
+.seg label{flex:1;padding:7px 0;text-align:center;font-size:12px;font-weight:500;color:#666;cursor:pointer;transition:all .15s;border:none;background:none}
+.seg label:not(:last-child){border-right:1px solid #ddd}
+.seg input{display:none}
+.seg label.act{background:#1a73e8;color:#fff;font-weight:600}
+
+/* List items */
+.list-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:#f8f8f8;border:1px solid #eee;border-radius:6px;margin-bottom:6px}
+.list-item span{flex:1;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace}
+.list-item button{background:none;border:none;color:#ccc;cursor:pointer;font-size:14px;padding:2px 4px}
+.list-item button:hover{color:#d32f2f}
+.list-add{display:flex;gap:8px}
+.list-add input{flex:1}
+.list-add button{width:auto;padding:8px 14px;flex-shrink:0}
+
+/* Reboot mode toggle */
+.mode-opts{display:flex;gap:16px;margin:8px 0}
+.mode-opts label{font-size:13px;font-weight:400;display:flex;align-items:center;gap:4px;color:#1e1e1e}
+.mode-opts input[type="radio"]{width:auto;margin:0}
+
+/* Responsive */
+@media(max-width:360px){
+  .tabs{flex-wrap:wrap}
+  .tab{flex:1 1 50%}
+  .tab:nth-child(2){border-right:none}
+}
 </style>
 </head>
 <body>
-<div class="container">
-<h1>📱 短信转发器<small>System Configuration</small></h1>
-<div class="nav">
-<a href="/" class="active">⚙️ 配置</a>
-<a href="/tools">🧰 工具</a>
+<div class="wrap">
+
+<div class="hdr">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div><h1>短信转发器</h1><p>System Configuration</p></div>
+    <a href="/tools" style="font-size:12px;color:#1a73e8;text-decoration:none;padding:6px 12px;border:1px solid #1a73e8;border-radius:4px">工具</a>
+  </div>
 </div>
 
-<div id="errorBox" class="error-box" role="alert">
-<span id="errorMsg"></span><br>
-<button class="btn btn-blue btn-sm" onclick="loadAll()" style="margin-top:8px">🔄 重试</button>
+<div class="status">设备 IP: <strong id="devIp">--</strong></div>
+
+<div class="tabs" id="tabBar">
+  <button class="tab act" data-t="general">常规</button>
+  <button class="tab" data-t="notify">推送</button>
+  <button class="tab" data-t="network">网络</button>
+  <button class="tab" data-t="advanced">高级</button>
 </div>
 
-<div id="loadingMsg">⏳ 正在加载配置…</div>
+<div id="errorBox" style="display:none;background:#ffebee;color:#c62828;border:1px solid #f5c6cb;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px">
+  <span id="errorMsg"></span>
+  <button onclick="loadAll()" style="margin-top:6px;background:#1a73e8;color:#fff;border:none;padding:6px 14px;border-radius:4px;font-size:12px;cursor:pointer">重试</button>
+</div>
+<div id="loadingMsg" style="text-align:center;padding:40px 0;color:#999;font-size:13px">正在加载配置...</div>
 
-<div id="mainContent">
-<div class="status-bar">📡 设备IP: <strong id="devIp">-</strong></div>
+<form id="configForm" onsubmit="saveGeneral(event)">
 
-<form id="configForm" onsubmit="saveConfig(event)">
-<div class="card">
-<div class="card-title">🔐 管理账号</div>
-<div class="warn-box">⚠️ 首次使用请修改默认密码！默认: admin / admin123</div>
-<div class="form-group"><label>管理账号</label><input type="text" name="webUser" id="webUser" placeholder="admin"></div>
-<div class="form-group"><label>管理密码（留空不修改）</label><input type="password" name="webPass" placeholder="请设置复杂密码"></div>
+<!-- Tab: General -->
+<div class="panel vis" data-panel="general">
+  <div class="card">
+    <div class="card-title">管理账号</div>
+    <div class="hint" style="margin-bottom:12px;background:#fff8e1;padding:8px 10px;border-radius:4px;color:#e65100;border:1px solid #ffe0b2">首次使用请修改默认密码 (admin / admin123)</div>
+    <div class="fg"><label class="lbl">用户名</label><input type="text" name="webUser" id="webUser" placeholder="admin"></div>
+    <div class="fg"><label class="lbl">密码 (留空不修改)</label><input type="password" name="webPass" placeholder="设置密码"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">设备信息</div>
+    <div class="fg"><label class="lbl">管理员手机号</label><input type="text" name="adminPhone" id="adminPhone" placeholder="13800138000"></div>
+    <div class="fg"><label class="lbl">设备备注</label><input type="text" name="remark" id="remark" maxlength="64" placeholder="可选，用于区分多台设备"></div>
+    <div style="margin-top:12px">
+      <label class="chk"><input type="checkbox" name="simNotifyEnabled" id="simNotifyEnabled"> SIM 卡事件通知</label>
+      <label class="chk"><input type="checkbox" name="dataTraffic" id="dataTrafficEnabled"> 启用数据流量</label>
+      <label class="chk"><input type="checkbox" name="logFileEnabled" id="logFileEnabled"> 写入日志文件</label>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-p" id="saveBtn">保存配置</button>
+  <div id="saveResult" class="res"></div>
 </div>
 
-<div class="card">
-<div class="card-title">📢 推送通道</div>
-<div class="hint" style="margin-bottom:12px">可同时启用多个推送通道。支持 POST JSON、Bark、钉钉、PushPlus、Server酱、飞书、Gotify、Telegram、企业微信、SMS等。</div>
-<div style="background:#f5f5f5;border-radius:8px;padding:12px;margin-bottom:14px">
-<label style="font-weight:700;display:block;margin-bottom:8px">推送策略</label>
-<div class="radio-group">
-<label><input type="radio" name="pushStrategy" value="0" checked> 广播</label>
-<label><input type="radio" name="pushStrategy" value="1"> 故障转移</label>
-</div>
-</div>
-<details style="margin-bottom:14px;border:1px solid #c8e6c9;border-radius:8px;overflow:hidden">
-<summary style="cursor:pointer;padding:10px 12px;background:#e8f5e9;font-weight:700;color:#2e7d32;list-style:none;display:flex;align-items:center;gap:6px">📋 自定义消息格式占位符<span style="margin-left:auto;font-weight:400;font-size:12px;color:#666">点击展开</span></summary>
-<table style="width:100%;border-collapse:collapse;font-size:13px">
-<thead><tr style="background:#f5f5f5"><th style="padding:6px 10px;text-align:left;white-space:nowrap">占位符</th><th style="padding:6px 10px;text-align:left">说明</th><th style="padding:6px 10px;text-align:left;color:#888">示例</th></tr></thead>
-<tbody>
-<tr><td style="padding:4px 10px;white-space:nowrap"><code>{remark}</code></td><td style="padding:4px 10px">设备备注</td><td style="padding:4px 10px;color:#888">我的设备</td></tr>
-<tr><td style="padding:4px 10px;white-space:nowrap"><code>{from}</code></td><td style="padding:4px 10px">发件人号码</td><td style="padding:4px 10px;color:#888">13800138000</td></tr>
-<tr><td style="padding:4px 10px;white-space:nowrap"><code>{to}</code></td><td style="padding:4px 10px">收件人号码</td><td style="padding:4px 10px;color:#888">13900139000</td></tr>
-<tr style="background:#fafafa"><td style="padding:4px 10px;white-space:nowrap"><code>{message_type}</code></td><td style="padding:4px 10px">消息类型</td><td style="padding:4px 10px;color:#888">短信 / 来电 / SIM事件</td></tr>
-<tr><td style="padding:4px 10px;white-space:nowrap"><code>{message_content}</code></td><td style="padding:4px 10px">消息内容 (alias <code>{message}</code>)</td><td style="padding:4px 10px;color:#888">验证码：1234</td></tr>
-<tr style="background:#fafafa"><td style="padding:4px 10px;white-space:nowrap"><code>{date}</code></td><td style="padding:4px 10px">带时区时间</td><td style="padding:4px 10px;color:#888">2026-04-25 10:30:00+0800</td></tr>
-<tr><td style="padding:4px 10px;white-space:nowrap"><code>{carrier}</code></td><td style="padding:4px 10px">运营商</td><td style="padding:4px 10px;color:#888">中国移动</td></tr>
-<tr style="background:#fafafa"><td style="padding:4px 10px;white-space:nowrap"><code>{signal}</code></td><td style="padding:4px 10px">信号强度</td><td style="padding:4px 10px;color:#888">-73dBm</td></tr>
-</tbody>
-</table>
-</details>
-<div id="pushChannels"></div>
-<button type="button" id="addPushBtn" onclick="addPushChannel()" class="btn btn-gray" style="margin-top:8px">➕ 添加推送通道</button>
-<input type="hidden" id="pushCountField" name="pushCount" value="5">
+<!-- Tab: Notifications -->
+<div class="panel" data-panel="notify">
+  <div class="card">
+    <div class="card-title">推送策略</div>
+    <div class="hint" style="margin-bottom:10px">广播: 同时发送所有通道; 故障转移: 按顺序尝试直到成功</div>
+    <div class="seg" id="strategySeg">
+      <label class="act"><input type="radio" name="pushStrategy" value="0" checked>广播</label>
+      <label><input type="radio" name="pushStrategy" value="1">故障转移</label>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">推送通道</div>
+    <div id="pushChannels"></div>
+    <button type="button" onclick="addPushChannel()" class="btn btn-s" id="addPushBtn" style="margin-top:4px">添加通道</button>
+  </div>
 </div>
 
-<div class="card">
-<div class="card-title">👤 管理员设置</div>
-<div class="form-group"><label>管理员手机号</label><input type="text" name="adminPhone" id="adminPhone" placeholder="13800138000"></div>
-<div class="form-group"><label>设备备注</label><input type="text" name="remark" id="remark" maxlength="64" placeholder="（可选）用于区分多台设备"></div>
-<div class="form-group"><label><input type="checkbox" name="simNotifyEnabled" id="simNotifyEnabled"> SIM 事件通知</label></div>
-<div class="form-group"><label><input type="checkbox" name="dataTraffic" id="dataTrafficEnabled"> 数据流量</label></div>
-<div class="form-group"><label><input type="checkbox" name="logFileEnabled" id="logFileEnabled"> 写入日志文件</label></div>
-</div>
-
-<button type="submit" id="saveBtn" class="btn btn-primary">💾 保存配置</button>
-<div id="saveResult" class="error-box" role="alert" style="margin-top:10px"></div>
 </form>
 
-<div class="card">
-<div class="card-title">📶 WiFi 设置</div>
-<div class="hint" style="margin-bottom:12px">最多5条WiFi，修改后自动重启。</div>
-<div id="wifiList"></div>
-<button type="button" id="addWifiBtn" onclick="addWifi()" class="btn btn-gray" style="margin-bottom:10px">➡️ 添加 WiFi</button>
-<button type="button" onclick="saveWifi()" class="btn btn-blue">📡 保存并重启</button>
-<div id="wifiResult" class="result-box"></div>
+<!-- Tab: Network -->
+<div class="panel" data-panel="network">
+  <div class="card">
+    <div class="card-title">WiFi 设置</div>
+    <div class="hint" style="margin-bottom:12px">最多 5 条，保存后设备自动重启连接新网络</div>
+    <div id="wifiList"></div>
+    <div class="btn-row" style="margin-top:8px">
+      <button onclick="addWifi()" class="btn btn-s" id="addWifiBtn">添加 WiFi</button>
+      <button onclick="saveWifi()" class="btn btn-p">保存并重启</button>
+    </div>
+    <div id="wifiResult" class="res"></div>
+  </div>
 </div>
 
-<div class="card">
-<div class="card-title">🚫 黑名单管理</div>
-<div class="hint" style="margin-bottom:10px">黑名单号码的短信和来电将被拦截，最多20个。</div>
-<div id="blacklistItems" style="margin-bottom:10px"></div>
-<div class="inline-flex" style="margin-bottom:10px"><input type="text" id="newBlNum" placeholder="输入手机号码"><button type="button" onclick="addBlackNum()" class="btn btn-gray btn-sm">➕</button></div>
-<button type="button" onclick="saveBlacklist()" class="btn btn-danger">💾 保存黑名单</button>
-<div id="blacklistResult" class="result-box"></div>
+<!-- Tab: Advanced -->
+<div class="panel" data-panel="advanced">
+  <div class="card">
+    <div class="card-title">黑名单</div>
+    <div class="hint" style="margin-bottom:10px">来自黑名单号码的短信和来电将被忽略 (最多 20 个)</div>
+    <div id="blacklistItems" style="margin-bottom:10px"></div>
+    <div class="list-add"><input type="text" id="newBlNum" placeholder="输入号码"><button onclick="addBlackNum()" class="btn btn-s">添加</button></div>
+    <button onclick="saveBlacklist()" class="btn btn-p" style="margin-top:10px">保存黑名单</button>
+    <div id="blacklistResult" class="res"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">定时重启</div>
+    <label class="chk"><input type="checkbox" id="rbEnabled"> 启用定时重启</label>
+    <div class="fg"><label class="lbl">重启模式</label>
+      <div class="mode-opts">
+        <label><input type="radio" name="rbMode" value="0" id="rbModeDaily" checked onchange="toggleRbMode()"> 每日定时</label>
+        <label><input type="radio" name="rbMode" value="1" id="rbModeInterval" onchange="toggleRbMode()"> 按间隔</label>
+      </div>
+    </div>
+    <div id="rbDailyGroup" class="fg">
+      <label class="lbl">重启时间</label>
+      <div style="display:flex;gap:8px;align-items:center"><input type="number" id="rbHour" min="0" max="23" value="3" style="width:70px"><span style="font-size:12px;color:#666">时</span><input type="number" id="rbMinute" min="0" max="59" value="0" style="width:70px"><span style="font-size:12px;color:#666">分</span></div>
+      <div class="hint">需要 NTP 时间同步</div>
+    </div>
+    <div id="rbIntervalGroup" class="fg" style="display:none">
+      <label class="lbl">间隔 (1 ~ 168 小时)</label>
+      <input type="number" id="rbIntervalH" min="1" max="168" value="24" style="width:100px">
+      <div class="hint">从上电开始计时</div>
+    </div>
+    <button onclick="saveReboot()" class="btn btn-p" id="rbSaveBtn">保存定时重启</button>
+    <div id="rbResult" class="res"></div>
+  </div>
 </div>
 
-<div class="card">
-<div class="card-title">⏰ 定时重启</div>
-<div class="form-group"><label><input type="checkbox" id="rbEnabled"> 启用定时重启</label></div>
-<div class="form-group"><label style="font-weight:700">重启模式</label>
-<div class="radio-group"><label><input type="radio" name="rbMode" value="0" id="rbModeDaily" checked onchange="toggleRbMode()"> 每日定时</label><label><input type="radio" name="rbMode" value="1" id="rbModeInterval" onchange="toggleRbMode()"> 每隔N小时</label></div>
-</div>
-<div id="rbDailyGroup" class="form-group">
-<label>重启时间</label>
-<div class="inline-flex"><input type="number" id="rbHour" min="0" max="23" value="3" style="width:70px"><span>时</span><input type="number" id="rbMinute" min="0" max="59" value="0" style="width:70px"><span>分</span></div>
-<div class="hint">需要 NTP 时间同步生效</div>
-</div>
-<div id="rbIntervalGroup" class="form-group" style="display:none">
-<label>间隔（1~168 小时）</label>
-<input type="number" id="rbIntervalH" min="1" max="168" value="24" style="width:120px">
-<div class="hint">从设备上电开始计时</div>
-</div>
-<button type="button" id="rbSaveBtn" onclick="saveReboot()" class="btn btn-warn">💾 保存定时重启</button>
-<div id="rbResult" class="result-box"></div>
-</div>
-</div>
 </div>
 
 <script>
-var PUSH_TYPE_LABELS={0:"未启用",1:"POST JSON",2:"Bark",3:"GET请求",4:"钉钉",5:"PushPlus",6:"Server酱",7:"POST 文本",8:"飞书",9:"Gotify",10:"Telegram",11:"企业微信",12:"SMS短信"};
-function showError(m){document.getElementById("errorMsg").textContent=m;document.getElementById("errorBox").style.display="block";document.getElementById("loadingMsg").style.display="none";document.getElementById("mainContent").style.display="none"}
-function escHtml(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
-function toggleChannel(i){var ch=document.getElementById("channel"+i);var cb=document.getElementById("push"+i+"en");if(cb.checked)ch.classList.add("enabled");else ch.classList.remove("enabled")}
-function updateTypeHint(i){var sel=document.getElementById("push"+i+"type");var hint=document.getElementById("hint"+i);var extra=document.getElementById("extra"+i);var k2=document.getElementById("key2group"+i);var type=parseInt(sel.value);extra.style.display="none";if(k2)k2.style.display="none";document.getElementById("push"+i+"label").innerText="Webhook URL";document.getElementById("push"+i+"url").placeholder="https://...";document.getElementById("key1label"+i).innerText="参数1";document.getElementById("key2label"+i).innerText="参数2";document.getElementById("key1"+i).placeholder="";document.getElementById("key2"+i).placeholder="";var m={"1":"<b>POST JSON：</b><br>{\"sender\":\"号码\",\"message\":\"内容\",\"timestamp\":\"时间戳\"}","2":"<b>Bark：</b><br>POST {\"title\":\"发送者\",\"body\":\"内容\"}","3":"<b>GET：</b><br>URL?sender=xxx&message=xxx","4":"<b>钉钉：</b><br>填写Webhook地址，加签填Secret","5":"<b>PushPlus：</b><br>填写Token","6":"<b>Server酱：</b><br>填写SendKey","7":"<b>POST文本：</b><br>发送自定义格式文本","8":"<b>飞书：</b><br>填写Webhook，可选填Secret","9":"<b>Gotify：</b><br>填写服务器地址+Token","10":"<b>Telegram：</b><br>Chat ID + Bot Token","11":"<b>企业微信：</b><br>填写Webhook，可选签名密钥","12":"<b>SMS短信：</b><br>填写目标手机号"};if(m[type])hint.innerHTML=m[type];else hint.innerHTML="";if([2,4,5,6,8,9,10,11].indexOf(type)>=0)extra.style.display="block";if(type===5){document.getElementById("key1label"+i).innerText="Token";if(k2)k2.style.display="block";document.getElementById("key2label"+i).innerText="发送渠道";document.getElementById("key1"+i).placeholder="PushPlus Token";document.getElementById("key2"+i).placeholder="wechat/default"}if(type===6){document.getElementById("key1label"+i).innerText="SendKey";document.getElementById("key1"+i).placeholder="SCT..."}if(type===10){if(k2)k2.style.display="block";document.getElementById("key1label"+i).innerText="Chat ID";document.getElementById("key2label"+i).innerText="Bot Token";document.getElementById("key1"+i).placeholder="123456789";document.getElementById("key2"+i).placeholder="12345678:ABC..."}if(type===4)document.getElementById("key1label"+i).innerText="Secret(可选)";if(type===8)document.getElementById("key1label"+i).innerText="Secret(可选)";if(type===9){document.getElementById("key1label"+i).innerText="Token";document.getElementById("push"+i+"url").placeholder="http://gotify.example.com";document.getElementById("key1"+i).placeholder="App Token"}if(type===11)document.getElementById("key1label"+i).innerText="Secret(可选)";if(type===12){document.getElementById("push"+i+"label").innerText="目标手机号";document.getElementById("push"+i+"url").placeholder="13800138000";var ph=document.getElementById("push"+i+"url");if(!ph.value&&g_adminPhone)ph.value=g_adminPhone}}
-function buildPushChannelHtml(ch){var i=ch.index;var opts="";for(var t=0;t<=12;t++)opts+='<option value="'+t+'"'+(ch.type===t?" selected":"")+">"+PUSH_TYPE_LABELS[t]+"</option>";var canRemove=g_pushChannels.length>1;return '<div class="push-channel'+(ch.enabled?" enabled":"")+'" id="channel'+i+'" data-chindex="'+i+'"><div class="push-channel-header"><input type="checkbox" id="push'+i+'en" name="push'+i+'en" value="1"'+(ch.enabled?" checked":"")+' onchange="toggleChannel('+i+')"><label for="push'+i+'en">通道 '+(i+1)+(ch.name?": "+escHtml(ch.name):"")+'</label>'+(canRemove?'<button type="button" onclick="removePushChannel('+i+')" class="btn btn-danger btn-sm" style="margin-left:auto">删除</button>':"")+'</div><div class="push-channel-body"><div class="form-group"><label>通道名称</label><input type="text" name="push'+i+'name" id="push'+i+'name" value="'+escHtml(ch.name)+'" placeholder="通道名称"></div><div class="form-group"><label>推送类型</label><select name="push'+i+'type" id="push'+i+'type" onchange="updateTypeHint('+i+')">'+opts+'</select></div><div class="form-group" id="webhook'+i+'"><label id="push'+i+'label">Webhook URL</label><input type="text" name="push'+i+'url" id="push'+i+'url" value="'+escHtml(ch.url)+'" placeholder="https://..."></div><div id="extra'+i+'" style="display:none"><div class="form-group"><label id="key1label'+i+'">参数1</label><input type="text" name="push'+i+'key1" id="key1'+i+'" value="'+escHtml(ch.key1)+'"></div><div class="form-group" id="key2group'+i+'" style="display:none"><label id="key2label'+i+'">参数2</label><input type="text" name="push'+i+'key2" id="key2'+i+'" value="'+escHtml(ch.key2)+'"></div></div><div class="form-group"><label>自定义推送格式</label><textarea name="push'+i+'body" id="body'+i+'" maxlength="512">'+escHtml(ch.customBody)+'</textarea><div class="hint">不填则使用默认格式；可用上方占位符</div></div><div class="form-group form-retry"><input type="checkbox" id="push'+i+'retry" name="push'+i+'retry" value="1"'+(ch.retryOnFail?" checked":"")+"><label for="push'+i+'retry">失败重试</label></div><div class="push-type-hint" id="hint'+i+'"></div></div></div>'}
-var g_pushChannels=[];var MAX_PUSH=10;var g_adminPhone="";
-function readChannelFromDom(i){var en=document.getElementById("push"+i+"en");return{enabled:!!(en&&en.checked),type:parseInt((document.getElementById("push"+i+"type")||{value:"1"}).value||"1"),name:(document.getElementById("push"+i+"name")||{value:""}).value||"",url:(document.getElementById("push"+i+"url")||{value:""}).value||"",key1:(document.getElementById("key1"+i)||{value:""}).value||"",key2:(document.getElementById("key2"+i)||{value:""}).value||"",customBody:(document.getElementById("body"+i)||{value:""}).value||""}}
-function renderPushChannels(){var c=document.getElementById("pushChannels");c.innerHTML="";for(var i=0;i<g_pushChannels.length;i++){var ch=Object.assign({},g_pushChannels[i],{index:i});c.insertAdjacentHTML("beforeend",buildPushChannelHtml(ch));updateTypeHint(i)}document.getElementById("addPushBtn").disabled=g_pushChannels.length>=MAX_PUSH;document.getElementById("pushCountField").value=g_pushChannels.length}
-function addPushChannel(){for(var i=0;i<g_pushChannels.length;i++)try{g_pushChannels[i]=readChannelFromDom(i)}catch(e){}if(g_pushChannels.length>=MAX_PUSH)return;g_pushChannels.push({enabled:false,type:1,name:"",url:"",key1:"",key2:"",customBody:""});renderPushChannels()}
-function removePushChannel(idx){if(g_pushChannels.length<=1)return;for(var i=0;i<g_pushChannels.length;i++)try{g_pushChannels[i]=readChannelFromDom(i)}catch(e){}g_pushChannels.splice(idx,1);renderPushChannels()}
-function fillForm(data){g_adminPhone=data.adminPhone||"";document.getElementById("webUser").value=data.webUser||"";document.getElementById("adminPhone").value=data.adminPhone||"";document.getElementById("remark").value=data.remark||"";document.getElementById("simNotifyEnabled").checked=!!data.simNotifyEnabled;document.getElementById("dataTrafficEnabled").checked=!!data.dataTraffic;document.getElementById("logFileEnabled").checked=!!data.logFileEnabled;var channels=data.pushChannels||[];g_pushChannels=[];for(var j=0;j<channels.length;j++)g_pushChannels.push(channels[j]);if(g_pushChannels.length===0)for(var j=0;j<5;j++)g_pushChannels.push({enabled:false,type:1,name:"",url:"",key1:"",key2:"",customBody:""});renderPushChannels();var s=data.pushStrategy!==undefined?data.pushStrategy:0;var rs=document.getElementsByName("pushStrategy");for(var r=0;r<rs.length;r++)rs[r].checked=parseInt(rs[r].value)===s;document.getElementById("rbEnabled").checked=!!data.rbEnabled;if(data.rbMode===1)document.getElementById("rbModeInterval").checked=true;else document.getElementById("rbModeDaily").checked=true;toggleRbMode();document.getElementById("rbHour").value=data.rbHour!==undefined?data.rbHour:3;document.getElementById("rbMinute").value=data.rbMinute!==undefined?data.rbMinute:0;document.getElementById("rbIntervalH").value=data.rbIntervalH!==undefined?data.rbIntervalH:24}
-function loadConfig(){return fetch("/api/config/detail").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){console.log("config data:",JSON.stringify(d).substring(0,200));fillForm(d)})}
-function loadStatus(){return fetch("/api/status").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){document.getElementById("devIp").textContent=d.ip||"-"})}
-function loadAll(){document.getElementById("errorBox").style.display="none";document.getElementById("loadingMsg").style.display="block";document.getElementById("mainContent").style.display="none";loadConfig().then(function(){return loadStatus()}).then(function(){return loadWifi()}).then(function(){return loadBlacklist()}).then(function(){document.getElementById("loadingMsg").style.display="none";document.getElementById("mainContent").style.display="block"}).catch(function(e){showError("无法获取配置（"+e.message+"）");document.getElementById("errorBox").insertAdjacentHTML("beforeend","<br><pre style='font-size:11px;color:#888;white-space:pre-wrap'>"+e.stack+"</pre>")})}
-var g_wifiList=[];var MAX_WIFI=5;
-function buildWifiEntryHtml(e,i){return '<div id="wifiEntry'+i+'" style="border:1px solid #e0e0e0;padding:12px;margin-bottom:10px;border-radius:8px;background:#fafbfc"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-weight:700;font-size:13px;color:#555">WiFi '+(i+1)+'</span>'+(g_wifiList.length>1?'<button type="button" onclick="removeWifi('+i+')" class="btn btn-danger btn-sm" style="margin-left:auto">删除</button>':"")+'</div><div class="form-group" style="margin-bottom:8px"><label>SSID</label><input type="text" id="wifiSsid'+i+'" value="'+escHtml(e.ssid)+'" placeholder="WiFi名称"></div><div class="form-group" style="margin-bottom:0"><label>密码（留空不修改）</label><input type="text" id="wifiPass'+i+'" placeholder="留空则不改密码"></div></div>'}
-function renderWifiList(){var c=document.getElementById("wifiList");c.innerHTML="";for(var i=0;i<g_wifiList.length;i++)c.insertAdjacentHTML("beforeend",buildWifiEntryHtml(g_wifiList[i],i));document.getElementById("addWifiBtn").disabled=g_wifiList.length>=MAX_WIFI}
-function addWifi(){if(g_wifiList.length>=MAX_WIFI)return;for(var i=0;i<g_wifiList.length;i++)g_wifiList[i].ssid=((document.getElementById("wifiSsid"+i)||{}).value||"").trim();g_wifiList.push({ssid:"",password:""});renderWifiList()}
-function removeWifi(idx){if(g_wifiList.length<=1)return;g_wifiList.splice(idx,1);renderWifiList()}
-function loadWifi(){return fetch("/api/wifi").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){g_wifiList=d.wifiList&&d.wifiList.length>0?d.wifiList:[{ssid:"",password:""}];renderWifiList()})}
-function showResult(id,ok,msg){var el=document.getElementById(id);el.className="result-box "+(ok?"result-success":"result-error");el.textContent=(ok?"✅ ":"❌ ")+msg;el.style.display="block"}
-function saveWifi(){var list=[];for(var i=0;i<g_wifiList.length;i++){var ssid=((document.getElementById("wifiSsid"+i)||{}).value||"").trim();var pw=(document.getElementById("wifiPass"+i)||{}).value||"";if(ssid)list.push({ssid:ssid,password:pw})}if(list.length===0){showResult("wifiResult",false,"请至少配置一条WiFi");return}fetch("/api/wifi",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({wifiList:list})}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){showResult("wifiResult",!!d.ok,d.ok?d.message||"WiFi已保存，设备即将重启…":d.error||"保存失败")}).catch(function(e){showResult("wifiResult",false,"请求失败: "+e.message)})}
-var g_blacklist=[];
-function loadBlacklist(){return fetch("/api/blacklist").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){g_blacklist=d.numbers||[];renderBlacklist()})}
-function renderBlacklist(){var c=document.getElementById("blacklistItems");if(g_blacklist.length===0){c.innerHTML='<div class="hint">暂无黑名单号码</div>';return}var h="";for(var i=0;i<g_blacklist.length;i++)h+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="flex:1;padding:8px 10px;background:#f5f5f5;border-radius:6px;font-size:14px">'+escHtml(g_blacklist[i])+'</span><button type="button" onclick="removeBlackNum('+i+')" class="btn btn-danger btn-sm" style="padding:4px 10px">删除</button></div>';c.innerHTML=h}
-function addBlackNum(){var inp=document.getElementById("newBlNum");var num=inp.value.trim();if(!num)return;if(g_blacklist.length>=20){showResult("blacklistResult",false,"黑名单最多20个");return}if(g_blacklist.indexOf(num)>=0){showResult("blacklistResult",false,"号码已存在");return}g_blacklist.push(num);inp.value="";renderBlacklist();document.getElementById("blacklistResult").style.display="none"}
-function removeBlackNum(idx){g_blacklist.splice(idx,1);renderBlacklist()}
-function saveBlacklist(){fetch("/api/blacklist",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({numbers:g_blacklist})}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){showResult("blacklistResult",!!d.ok,d.ok?"黑名单已保存，共"+d.count+"条":d.error||"保存失败")}).catch(function(e){showResult("blacklistResult",false,"请求失败: "+e.message)})}
-function toggleRbMode(){var isI=document.getElementById("rbModeInterval").checked;document.getElementById("rbDailyGroup").style.display=isI?"none":"";document.getElementById("rbIntervalGroup").style.display=isI?"":"none"}
-function saveReboot(){var btn=document.getElementById("rbSaveBtn");btn.disabled=true;showResult("rbResult",true,"正在保存…");var form=new FormData();if(document.getElementById("rbEnabled").checked)form.append("rbEnabled","on");form.append("rbMode",document.querySelector('input[name="rbMode"]:checked').value);form.append("rbHour",document.getElementById("rbHour").value);form.append("rbMinute",document.getElementById("rbMinute").value);form.append("rbIntervalH",document.getElementById("rbIntervalH").value);fetch("/api/reboot",{method:"POST",body:form}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){btn.disabled=false;showResult("rbResult",!!d.ok,d.ok?"定时重启设置已保存":d.error||"保存失败")}).catch(function(e){btn.disabled=false;showResult("rbResult",false,"请求失败: "+e.message)})}
+var TYPES={0:"未启用",1:"POST JSON",2:"Bark",3:"GET 请求",4:"钉钉",5:"PushPlus",6:"Server酱",7:"POST 文本",8:"飞书",9:"Gotify",10:"Telegram",11:"企业微信",12:"SMS 短信"};
+var HINTS={1:"POST JSON 发送 {sender, message, timestamp}",2:"POST {title, body} 到 Bark 推送地址",3:"GET 请求，参数: sender, message",4:"填写 Webhook 地址，可选签名密钥",5:"填写 PushPlus Token",6:"填写 Server酱 SendKey",7:"POST 自定义格式文本",8:"填写飞书 Webhook，可选签名密钥",9:"填写 Gotify 服务器地址和 Token",10:"需要 Chat ID 和 Bot Token",11:"填写企业微信 Webhook，可选签名密钥",12:"通过短信转发到指定号码"};
+var g_chs=[],g_wifis=[],g_bl=[],g_avail=null,g_adminPhone="";
+
+/* --- Tabs --- */
+document.getElementById("tabBar").addEventListener("click",function(e){
+  var btn=e.target.closest(".tab");if(!btn)return;
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("act")});
+  btn.classList.add("act");
+  document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("vis")});
+  document.querySelector('[data-panel="'+btn.dataset.t+'"]').classList.add("vis");
+});
+
+/* --- Strategy segmented --- */
+document.getElementById("strategySeg").addEventListener("click",function(e){
+  var lbl=e.target.closest("label");if(!lbl)return;
+  this.querySelectorAll("label").forEach(function(l){l.classList.remove("act")});
+  lbl.classList.add("act");
+  lbl.querySelector("input").checked=true;
+});
+
+/* --- Helpers --- */
+function showRes(id,ok,msg){var el=document.getElementById(id);el.className="res "+(ok?"ok":"err");el.textContent=(ok?"":"错误: ")+msg}
+function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+
+/* --- Push Channels --- */
+function chHtml(ch,idx){
+  var en=ch.enabled,on=en?" on":"",opts="";
+  for(var t=0;t<=12;t++){
+    var avail=(t===0)||(g_avail&&g_avail.indexOf(t)>=0);
+    var cur=(ch.type===t);
+    if(avail||cur) opts+='<option value="'+t+'"'+(cur?" selected":"")+">"+TYPES[t]+(avail?"":" *")+"</option>";
+  }
+  var body='<div class="pch'+on+'" data-i="'+idx+'"><div class="pch-hdr"><label class="chk"><input type="checkbox"'+(en?" checked":"")+' onchange="togCh(this)"> 通道 '+(idx+1)+(ch.name?": "+esc(ch.name):"")+'</label><button type="button" class="pch-del" onclick="delCh('+idx+')" title="删除">&times;</button></div><div class="pch-body"><div class="fg"><label class="lbl">名称</label><input type="text" value="'+esc(ch.name)+'" data-k="name"></div><div class="fg"><label class="lbl">类型</label><select data-k="type" onchange="updHint(this)">'+opts+'</select><div class="type-hint" data-k="hint">'+(HINTS[ch.type]||"")+'</div></div><div class="fg" data-k="urlG"><label class="lbl" data-k="urlL">URL</label><input type="text" value="'+esc(ch.url)+'" data-k="url" placeholder="https://..."></div><div class="fg" data-k="k1G" style="display:none"><label class="lbl" data-k="k1L">参数 1</label><input type="text" value="'+esc(ch.key1)+'" data-k="k1"></div><div class="fg" data-k="k2G" style="display:none"><label class="lbl" data-k="k2L">参数 2</label><input type="text" value="'+esc(ch.key2)+'" data-k="k2"></div><div class="fg"><label class="lbl">自定义格式</label><textarea data-k="body" maxlength="512">'+esc(ch.customBody)+'</textarea><div class="hint">留空使用默认格式，可用占位符: {from} {to} {message_content} {date} ...</div></div><label class="chk"><input type="checkbox"'+(ch.retryOnFail?" checked":"")+' data-k="retry"> 失败时重试</label></div></div>';
+  return body;
+}
+function renderChs(){var c=document.getElementById("pushChannels");c.innerHTML="";for(var i=0;i<g_chs.length;i++)c.insertAdjacentHTML("beforeend",chHtml(g_chs[i],i));for(var i=0;i<g_chs.length;i++)updFields(i);document.getElementById("addPushBtn").disabled=g_chs.length>=10}
+function togCh(cb){var p=cb.closest(".pch");if(cb.checked)p.classList.add("on");else p.classList.remove("on")}
+function getChVal(i,k){var el=document.querySelector('.pch[data-i="'+i+'"] [data-k="'+k+'"]');return el?(el.type==="checkbox"?el.checked:el.value):""}
+function setChVal(i,k,v){var el=document.querySelector('.pch[data-i="'+i+'"] [data-k="'+k+'"]');if(el){if(el.type==="checkbox")el.checked=v;else el.value=v}}
+function readCh(i){return{enabled:!!getChVal(i,"en"),type:parseInt(getChVal(i,"type")||"1"),name:getChVal(i,"name"),url:getChVal(i,"url"),key1:getChVal(i,"k1"),key2:getChVal(i,"k2"),customBody:getChVal(i,"body"),retryOnFail:!!getChVal(i,"retry")}}
+function readChs(){var arr=[];for(var i=0;i<g_chs.length;i++)try{arr.push(readCh(i))}catch(e){arr.push(g_chs[i])}return arr}
+function addPushChannel(){g_chs=readChs();if(g_chs.length>=10)return;var def=g_avail&&g_avail.length?g_avail[0]:1;g_chs.push({enabled:false,type:def,name:"",url:"",key1:"",key2:"",customBody:"",retryOnFail:false});renderChs()}
+function delCh(idx){if(g_chs.length<=1)return;g_chs=readChs();g_chs.splice(idx,1);renderChs()}
+function updHint(sel){var p=sel.closest(".pch"),i=parseInt(p.dataset.i),t=parseInt(sel.value);p.querySelector('[data-k="hint"]').textContent=HINTS[t]||"";updFields(i)}
+function updFields(i){
+  var t=parseInt(getChVal(i,"type")||"1"),p=document.querySelector('.pch[data-i="'+i+'"]');
+  var k1G=p.querySelector('[data-k="k1G"]'),k2G=p.querySelector('[data-k="k2G"]');
+  var k1L=p.querySelector('[data-k="k1L"]'),k2L=p.querySelector('[data-k="k2L"]');
+  var urlL=p.querySelector('[data-k="urlL"]'),urlI=p.querySelector('[data-k="url"]');
+  k1G.style.display="none";k2G.style.display="none";
+  urlL.textContent="URL";urlI.placeholder="https://...";
+  k1L.textContent="参数 1";k2L.textContent="参数 2";
+  var show12=[2,4,5,6,8,9,10,11].indexOf(t)>=0;
+  if(show12){k1G.style.display="block";k2G.style.display="block"}
+  if(t===5){k1L.textContent="Token";k2L.textContent="渠道";k2G.style.display="block"}
+  if(t===6){k1L.textContent="SendKey"}
+  if(t===10){k1L.textContent="Chat ID";k2L.textContent="Bot Token";k2G.style.display="block"}
+  if(t===4||t===8||t===11){k1L.textContent="签名密钥 (可选)"}
+  if(t===9){k1L.textContent="Token";urlL.textContent="服务器地址";urlI.placeholder="http://gotify.example.com"}
+  if(t===12){urlL.textContent="目标手机号";urlI.placeholder="13800138000";if(!getChVal(i,"url")&&g_adminPhone)setChVal(i,"url",g_adminPhone)}
+}
+
+/* --- WiFi --- */
+function wifiHtml(e,i){return'<div class="list-item" data-i="'+i+'"><input type="text" id="wSsid'+i+'" value="'+esc(e.ssid)+'" placeholder="SSID" style="flex:1;border:none;background:transparent;padding:4px 0;font-size:13px"><input type="text" id="wPass'+i+'" placeholder="密码" style="width:100px;border:none;background:transparent;padding:4px 0;font-size:13px;text-align:right">'+(g_wifis.length>1?'<button onclick="rmWifi('+i+')">&times;</button>':'')+'</div>'}
+function renderWifi(){var c=document.getElementById("wifiList");c.innerHTML="";for(var i=0;i<g_wifis.length;i++)c.insertAdjacentHTML("beforeend",wifiHtml(g_wifis[i],i));document.getElementById("addWifiBtn").disabled=g_wifis.length>=5}
+function addWifi(){for(var i=0;i<g_wifis.length;i++)g_wifis[i].ssid=(document.getElementById("wSsid"+i)||{}).value||"";g_wifis.push({ssid:"",password:""});renderWifi()}
+function rmWifi(i){if(g_wifis.length<=1)return;g_wifis.splice(i,1);renderWifi()}
+
+/* --- Blacklist --- */
+function renderBl(){var c=document.getElementById("blacklistItems");if(!g_bl.length){c.innerHTML='<div class="hint">暂无黑名单号码</div>';return}var h="";for(var i=0;i<g_bl.length;i++)h+='<div class="list-item"><span>'+esc(g_bl[i])+'</span><button onclick="rmBl('+i+')">&times;</button></div>';c.innerHTML=h}
+function addBlackNum(){var inp=document.getElementById("newBlNum"),n=inp.value.trim();if(!n)return;if(g_bl.length>=20){showRes("blacklistResult",false,"最多 20 个");return}if(g_bl.indexOf(n)>=0){showRes("blacklistResult",false,"号码已存在");return}g_bl.push(n);inp.value="";renderBl();document.getElementById("blacklistResult").style.display="none"}
+function rmBl(i){g_bl.splice(i,1);renderBl()}
+
+/* --- Reboot --- */
+function toggleRbMode(){var iv=document.getElementById("rbModeInterval").checked;document.getElementById("rbDailyGroup").style.display=iv?"none":"";document.getElementById("rbIntervalGroup").style.display=iv?"":"none"}
+
+/* --- Load --- */
+function loadConfig(){return fetch("/api/config/detail").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){
+  g_adminPhone=d.adminPhone||"";g_avail=d.availablePushTypes||null;
+  document.getElementById("webUser").value=d.webUser||"";
+  document.getElementById("adminPhone").value=d.adminPhone||"";
+  document.getElementById("remark").value=d.remark||"";
+  document.getElementById("simNotifyEnabled").checked=!!d.simNotifyEnabled;
+  document.getElementById("dataTrafficEnabled").checked=!!d.dataTraffic;
+  document.getElementById("logFileEnabled").checked=!!d.logFileEnabled;
+  var chs=d.pushChannels||[];g_chs=[];
+  for(var j=0;j<chs.length;j++)g_chs.push(chs[j]);
+  if(!g_chs.length)for(var j=0;j<5;j++)g_chs.push({enabled:false,type:1,name:"",url:"",key1:"",key2:"",customBody:"",retryOnFail:false});
+  renderChs();
+  var s=d.pushStrategy!==undefined?d.pushStrategy:0;
+  var seg=document.getElementById("strategySeg"),labels=seg.querySelectorAll("label"),inputs=seg.querySelectorAll("input");
+  for(var r=0;r<inputs.length;r++){var on=parseInt(inputs[r].value)===s;inputs[r].checked=on;labels[r].classList.toggle("act",on)}
+  document.getElementById("rbEnabled").checked=!!d.rbEnabled;
+  if(d.rbMode===1)document.getElementById("rbModeInterval").checked=true;else document.getElementById("rbModeDaily").checked=true;
+  toggleRbMode();
+  document.getElementById("rbHour").value=d.rbHour!==undefined?d.rbHour:3;
+  document.getElementById("rbMinute").value=d.rbMinute!==undefined?d.rbMinute:0;
+  document.getElementById("rbIntervalH").value=d.rbIntervalH!==undefined?d.rbIntervalH:24;
+})}
+function loadStatus(){return fetch("/api/status").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){document.getElementById("devIp").textContent=d.ip||"--"})}
+function loadWifi(){return fetch("/api/wifi").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){g_wifis=d.wifiList&&d.wifiList.length?d.wifiList:[{ssid:"",password:""}];renderWifi()})}
+function loadBlacklist(){return fetch("/api/blacklist").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){g_bl=d.numbers||[];renderBl()})}
+
+function loadAll(){
+  document.getElementById("errorBox").style.display="none";
+  document.getElementById("loadingMsg").style.display="block";
+  loadConfig().then(loadStatus).then(loadWifi).then(loadBlacklist).then(function(){
+    document.getElementById("loadingMsg").style.display="none";
+  }).catch(function(e){
+    document.getElementById("loadingMsg").style.display="none";
+    document.getElementById("errorMsg").textContent=e.message.indexOf("HTTP 401")===0?"认证失败，请检查账号密码":"无法加载配置: "+e.message;
+    document.getElementById("errorBox").style.display="block";
+  });
+}
+
+/* --- Save --- */
+function saveGeneral(ev){
+  ev.preventDefault();
+  var btn=document.getElementById("saveBtn"),res=document.getElementById("saveResult");
+  btn.disabled=true;btn.textContent="保存中...";res.style.display="none";
+  var chs=readChs();
+  var fd=new FormData(document.getElementById("configForm"));
+  fd.append("pushCount",chs.length);
+  for(var i=0;i<chs.length;i++){
+    fd.append("push"+i+"en",chs[i].enabled?"1":"");
+    fd.append("push"+i+"type",chs[i].type);
+    fd.append("push"+i+"name",chs[i].name);
+    fd.append("push"+i+"url",chs[i].url);
+    fd.append("push"+i+"key1",chs[i].key1);
+    fd.append("push"+i+"key2",chs[i].key2);
+    fd.append("push"+i+"body",chs[i].customBody);
+    fd.append("push"+i+"retry",chs[i].retryOnFail?"1":"");
+  }
+  fetch("/api/save",{method:"POST",body:fd}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){
+    btn.disabled=false;btn.textContent="保存配置";
+    showRes("saveResult",!!d.ok,d.ok?(d.message||"保存成功，修改密码后需重新登录"):(d.error||"保存失败"));
+  }).catch(function(e){btn.disabled=false;btn.textContent="保存配置";showRes("saveResult",false,"请求失败: "+e.message)});
+}
+
+function saveWifi(){
+  var list=[];
+  for(var i=0;i<g_wifis.length;i++){
+    var ssid=(document.getElementById("wSsid"+i)||{}).value||"";
+    var pw=(document.getElementById("wPass"+i)||{}).value||"";
+    if(ssid.trim())list.push({ssid:ssid.trim(),password:pw});
+  }
+  if(!list.length){showRes("wifiResult",false,"请至少添加一条 WiFi");return}
+  fetch("/api/wifi",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({wifiList:list})}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){
+    showRes("wifiResult",!!d.ok,d.ok?(d.message||"已保存，设备将重启"):d.error||"保存失败");
+  }).catch(function(e){showRes("wifiResult",false,"请求失败: "+e.message)});
+}
+
+function saveBlacklist(){
+  fetch("/api/blacklist",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({numbers:g_bl})}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){
+    showRes("blacklistResult",!!d.ok,d.ok?"已保存，共 "+d.count+" 条":d.error||"保存失败");
+  }).catch(function(e){showRes("blacklistResult",false,"请求失败: "+e.message)});
+}
+
+function saveReboot(){
+  var btn=document.getElementById("rbSaveBtn");btn.disabled=true;
+  var fd=new FormData();
+  if(document.getElementById("rbEnabled").checked)fd.append("rbEnabled","on");
+  fd.append("rbMode",document.querySelector('input[name="rbMode"]:checked').value);
+  fd.append("rbHour",document.getElementById("rbHour").value);
+  fd.append("rbMinute",document.getElementById("rbMinute").value);
+  fd.append("rbIntervalH",document.getElementById("rbIntervalH").value);
+  fetch("/api/reboot",{method:"POST",body:fd}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){
+    btn.disabled=false;showRes("rbResult",!!d.ok,d.ok?"已保存":d.error||"保存失败");
+  }).catch(function(e){btn.disabled=false;showRes("rbResult",false,"请求失败: "+e.message)});
+}
+
 document.addEventListener("DOMContentLoaded",loadAll);
-function saveConfig(event){event.preventDefault();var btn=document.getElementById("saveBtn");var result=document.getElementById("saveResult");btn.disabled=true;btn.textContent="⏳ 保存中…";result.style.display="none";var form=document.getElementById("configForm");var data=new FormData(form);fetch("/api/save",{method:"POST",body:data}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){btn.disabled=false;btn.textContent="💾 保存配置";if(d.ok){result.className="result-box result-success";result.textContent="✅ "+(d.message||"配置保存成功！如修改了密码请重新登录。")}else{result.className="result-box result-error";result.textContent="❌ 保存失败: "+(d.error||d.message||"")}result.style.display="block"}).catch(function(e){btn.disabled=false;btn.textContent="💾 保存配置";result.className="result-box result-error";result.textContent="❌ 请求失败: "+e.message;result.style.display="block"})}
 </script>
 </body>
 </html>

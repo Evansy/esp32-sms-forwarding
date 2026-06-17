@@ -260,22 +260,54 @@ bool ConfigStore::isPushChannelValid(const PushChannel& ch) {
     return false;
   }
   switch (ch.type) {
+#if FEATURE_PUSH_POST_JSON
     case PUSH_TYPE_POST_JSON:
-    case PUSH_TYPE_BARK:
-    case PUSH_TYPE_GET:
-    case PUSH_TYPE_DINGTALK:
-    case PUSH_TYPE_FEISHU:
-    case PUSH_TYPE_CUSTOM:
-    case PUSH_TYPE_WECHAT_WORK:
-    case PUSH_TYPE_SMS:
       return ch.url.length() > 0;
+#endif
+#if FEATURE_PUSH_BARK
+    case PUSH_TYPE_BARK:
+      return ch.url.length() > 0;
+#endif
+#if FEATURE_PUSH_GET
+    case PUSH_TYPE_GET:
+      return ch.url.length() > 0;
+#endif
+#if FEATURE_PUSH_DINGTALK
+    case PUSH_TYPE_DINGTALK:
+      return ch.url.length() > 0;
+#endif
+#if FEATURE_PUSH_PUSHPLUS
     case PUSH_TYPE_PUSHPLUS:
+      return ch.key1.length() > 0;
+#endif
+#if FEATURE_PUSH_SERVERCHAN
     case PUSH_TYPE_SERVERCHAN:
       return ch.key1.length() > 0;
+#endif
+#if FEATURE_PUSH_CUSTOM
+    case PUSH_TYPE_CUSTOM:
+      return ch.url.length() > 0;
+#endif
+#if FEATURE_PUSH_FEISHU
+    case PUSH_TYPE_FEISHU:
+      return ch.url.length() > 0;
+#endif
+#if FEATURE_PUSH_GOTIFY
     case PUSH_TYPE_GOTIFY:
       return ch.url.length() > 0 && ch.key1.length() > 0;
+#endif
+#if FEATURE_PUSH_TELEGRAM
     case PUSH_TYPE_TELEGRAM:
       return ch.key1.length() > 0 && ch.key2.length() > 0;
+#endif
+#if FEATURE_PUSH_WECHAT_WORK
+    case PUSH_TYPE_WECHAT_WORK:
+      return ch.url.length() > 0;
+#endif
+#if FEATURE_PUSH_SMS
+    case PUSH_TYPE_SMS:
+      return ch.url.length() > 0;
+#endif
     default:
       return false;
   }

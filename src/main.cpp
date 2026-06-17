@@ -17,7 +17,9 @@
 #include "http/http_server.h"
 #include "ota/ota_manager.h"
 #include "schedule/schedule.h"
+#if FEATURE_COREDUMP
 #include "coredump/coredump.h"
+#endif
 #include <time.h>
 
 // Serial port mapping
@@ -31,9 +33,11 @@ AsyncWebServer server(80);
 static bool s_simInfoFetched = false;
 
 // 开机推送崩溃快照（在安排推送时捕获，防止 RTC 被后续更新覆写）
+#if FEATURE_COREDUMP
 static bool   s_cachedHasCrash      = false;
 static time_t s_cachedCrashTime     = 0;
 static String s_cachedCrashVersion  = "";
+#endif
 
 // 开机推送：检测到 WiFi 初始化完成后延迟 BOOT_PUSH_DELAY_MS 触发
 static bool          s_bootPushPending    = false;
@@ -97,7 +101,9 @@ void setup() {
 
   Sms::initConcatBuffer();
   ConfigStore::load();
+#if FEATURE_COREDUMP
   Coredump::init();  // 断电重启时从 NVS 恢复崩溃时间估算
+#endif
   ConfigStore::loadReboot(rebootSchedule);
   ScheduleStore::load();
   esp_task_wdt_reset();
@@ -155,7 +161,11 @@ void loop() {
     if (millis() - lastUrlPrint >= 3000) {
       lastUrlPrint = millis();
       if (WifiManager::mode() == WIFI_MODE_AP_ACTIVE) {
+#if FEATURE_BLUFI
         LOG("MAIN", "⚠️ 当前号码: %s，请访问 %s 配置WiFi，或通过 BluFi BLE 配网（设备名: %s）", Sim::phoneNum().c_str(), WifiManager::deviceUrl().c_str(), WifiManager::deviceName().c_str());
+#else
+        LOG("MAIN", "⚠️ 当前号码: %s，请访问 %s 配置WiFi", Sim::phoneNum().c_str(), WifiManager::deviceUrl().c_str());
+#endif
       } else {
         LOG("MAIN", "⚠️ 当前号码: %s，请访问 %s 进行配置", Sim::phoneNum().c_str(), WifiManager::deviceUrl().c_str());
       }
@@ -167,9 +177,11 @@ void loop() {
   if (!s_wifiInitWasSeen && WifiManager::isInitDone()) {
     s_wifiInitWasSeen = true;
     if (ConfigStore::isValid()) {
+#if FEATURE_COREDUMP
       s_cachedHasCrash     = Coredump::hasData();
       s_cachedCrashTime    = Coredump::crashTime();
       s_cachedCrashVersion = Coredump::crashVersion();
+#endif
       s_bootPushPending = true;
       s_bootPushAfterMs = millis() + BOOT_PUSH_DELAY_MS;
       LOG("MAIN", "WiFi初始化完成，%lu ms 后触发开机推送", BOOT_PUSH_DELAY_MS);
@@ -185,6 +197,7 @@ void loop() {
         "\n🌐 设备地址: " + WifiManager::deviceUrl() +
         "\n📶 MAC: " + WiFi.macAddress() +
         "\n📦 固件版本: " + Ota::version();
+#if FEATURE_COREDUMP
       if (s_cachedHasCrash) {
         time_t ct = s_cachedCrashTime;
         if (ct > 0) {
@@ -201,6 +214,7 @@ void loop() {
         }
         bootMsg += "，请前往工具箱导出 coredump";
       }
+#endif
       Push::send("设备", bootMsg, TimeSync::dateStr(), MsgTypeInfo(MSG_TYPE_SIM));
     }
   }
@@ -214,6 +228,7 @@ void loop() {
   WifiManager::tick();
 
   // RTC 最后已知时间更新（每 10 秒，仅时间已同步时）
+#if FEATURE_COREDUMP
   {
     static unsigned long s_lastRtcUpdate = 0;
     if (TimeSync::isSynced() && millis() - s_lastRtcUpdate >= 10000) {
@@ -221,6 +236,7 @@ void loop() {
       Coredump::updateLastKnownTime(time(nullptr));
     }
   }
+#endif
 
   // SIM 就绪后抓取运营商/信号，并在 NTP 未同步时从 SIM NITZ 同步时间
   if (!s_simInfoFetched && Sim::state() == SIM_READY) {

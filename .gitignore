@@ -13,3 +13,4 @@ __pycache__
 !.github/ISSUE_TEMPLATE
 .claude
 docs/superpowers
+.venv

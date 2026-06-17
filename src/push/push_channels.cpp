@@ -1,6 +1,8 @@
 #include "push_channels.h"
 #include "../logger/logger.h"
+#if FEATURE_PUSH_SMS
 #include "sms/sms.h"
+#endif
 #include "../utils/http.h"
 #include <ArduinoJson.h>
 #include <mbedtls/md.h>
@@ -25,6 +27,7 @@ static String urlEncode(const String& str) {
   return encoded;
 }
 
+#if FEATURE_PUSH_DINGTALK || FEATURE_PUSH_FEISHU || FEATURE_PUSH_WECHAT_WORK
 static String computeHmacSha256Base64(const String& key, const String& data) {
   uint8_t hmacResult[32];
   mbedtls_md_context_t ctx;
@@ -36,11 +39,15 @@ static String computeHmacSha256Base64(const String& key, const String& data) {
   mbedtls_md_free(&ctx);
   return base64::encode(hmacResult, 32);
 }
+#endif
 
+#if FEATURE_PUSH_DINGTALK
 static String dingtalkSign(const String& secret, int64_t timestamp) {
   return urlEncode(computeHmacSha256Base64(secret, String(timestamp) + "\n" + secret));
 }
+#endif
 
+#if FEATURE_PUSH_DINGTALK || FEATURE_PUSH_WECHAT_WORK
 static int64_t getUtcMillis() {
   struct timeval tv;
   if (gettimeofday(&tv, NULL) == 0) {
@@ -48,6 +55,7 @@ static int64_t getUtcMillis() {
   }
   return (int64_t)time(nullptr) * 1000LL;
 }
+#endif
 
 // 上次 HTTP 请求完成的时刻（millis()）；0 表示尚未发送过任何请求。
 static unsigned long s_lastHttpEndMs = 0;
@@ -77,6 +85,7 @@ static bool isResponseSuccessful(HttpSession* session, int code) {
 
 // ---------- channel implementations ----------
 
+#if FEATURE_PUSH_POST_JSON
 bool PushChannels::sendPostJson(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   auto session = request(ch.url);
   if (!session) return false;
@@ -97,7 +106,9 @@ bool PushChannels::sendPostJson(const PushChannel& ch, const String& sender, con
   int code = session->http()->POST(body);
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_BARK
 bool PushChannels::sendBark(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   auto session = request(ch.url);
   if (!session) return false;
@@ -115,7 +126,9 @@ bool PushChannels::sendBark(const PushChannel& ch, const String& sender, const P
   int code = session->http()->POST(body);
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_GET
 bool PushChannels::sendGet(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   String url = ch.url;
   url += (url.indexOf('?') == -1) ? "?" : "&";
@@ -129,7 +142,9 @@ bool PushChannels::sendGet(const PushChannel& ch, const String& sender, const Pu
   int code = session->http()->GET();
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_DINGTALK
 bool PushChannels::sendDingtalk(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   String webhookUrl = ch.url;
 
@@ -158,7 +173,9 @@ bool PushChannels::sendDingtalk(const PushChannel& ch, const String& sender, con
   int code = session->http()->POST(body);
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_PUSHPLUS
 bool PushChannels::sendPushPlus(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   String url = ch.url.length() > 0 ? ch.url : "http://www.pushplus.plus/send";
   auto session = request(url);
@@ -188,7 +205,9 @@ bool PushChannels::sendPushPlus(const PushChannel& ch, const String& sender, con
   int code = session->http()->POST(body);
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_SERVERCHAN
 bool PushChannels::sendServerChan(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   String url = ch.url.length() > 0 ? ch.url : ("https://sctapi.ftqq.com/" + ch.key1 + ".send");
   auto session = request(url);
@@ -203,7 +222,9 @@ bool PushChannels::sendServerChan(const PushChannel& ch, const String& sender, c
   int code = session->http()->POST(postData);
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_CUSTOM
 bool PushChannels::sendCustom(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   // 类型7（POST请求）：使用 message.content（可为空，FR-008: 留空时发送空 POST body）
   auto session = request(ch.url);
@@ -215,7 +236,9 @@ bool PushChannels::sendCustom(const PushChannel& ch, const String& sender, const
   int code = session->http()->POST(body);
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_FEISHU
 bool PushChannels::sendFeishu(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   auto session = request(ch.url);
   if (!session) return false;
@@ -240,7 +263,9 @@ bool PushChannels::sendFeishu(const PushChannel& ch, const String& sender, const
   int code = session->http()->POST(body);
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_GOTIFY
 bool PushChannels::sendGotify(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   String url = ch.url;
   if (!url.endsWith("/")) url += "/";
@@ -261,7 +286,9 @@ bool PushChannels::sendGotify(const PushChannel& ch, const String& sender, const
   int code = session->http()->POST(body);
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_TELEGRAM
 bool PushChannels::sendTelegram(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   String baseUrl = ch.url.length() > 0 ? ch.url : "https://api.telegram.org";
   if (baseUrl.endsWith("/")) baseUrl.remove(baseUrl.length() - 1);
@@ -281,7 +308,9 @@ bool PushChannels::sendTelegram(const PushChannel& ch, const String& sender, con
   int code = session->http()->POST(body);
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_WECHAT_WORK
 bool PushChannels::sendWechatWork(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   String webhookUrl = ch.url;
 
@@ -308,7 +337,9 @@ bool PushChannels::sendWechatWork(const PushChannel& ch, const String& sender, c
   int code = session->http()->POST(body);
   return isResponseSuccessful(session.get(), code);
 }
+#endif
 
+#if FEATURE_PUSH_SMS
 bool PushChannels::sendSmsPush(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp) {
   String content = message.type == PUSH_BODY_CUSTOM ? message.content : ("[转发]发件人: " + sender + "\n内容: " + message.content);
   // Sms::sendPDU 内部自动处理长短信拆分，无需手动截断
@@ -317,3 +348,4 @@ bool PushChannels::sendSmsPush(const PushChannel& ch, const String& sender, cons
   if (!ok) LOG("PUSHCH", "SMS备份推送失败");
   return ok;
 }
+#endif

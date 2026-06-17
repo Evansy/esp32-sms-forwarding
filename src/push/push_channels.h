@@ -24,16 +24,40 @@ struct PushBody {
 // 严禁共享，否则在并发推送或与 OTA 同时下载时会导致 TLS 状态损坏。
 class PushChannels {
 public:
+#if FEATURE_PUSH_POST_JSON
   static bool sendPostJson  (const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_BARK
   static bool sendBark      (const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_GET
   static bool sendGet       (const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_DINGTALK
   static bool sendDingtalk  (const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_PUSHPLUS
   static bool sendPushPlus  (const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_SERVERCHAN
   static bool sendServerChan(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_CUSTOM
   static bool sendCustom    (const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_FEISHU
   static bool sendFeishu    (const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_GOTIFY
   static bool sendGotify    (const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_TELEGRAM
   static bool sendTelegram  (const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_WECHAT_WORK
   static bool sendWechatWork(const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
+#if FEATURE_PUSH_SMS
   static bool sendSmsPush   (const PushChannel& ch, const String& sender, const PushBody& message, const String& timestamp);
+#endif
 };

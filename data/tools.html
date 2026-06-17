@@ -1,321 +1,781 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>工具箱</title>
+<title>短信转发器 — 工具</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#eef2f7;color:#333;line-height:1.5}
-.container{max-width:560px;margin:0 auto;padding:0 16px 32px}
-h1{text-align:center;font-size:22px;padding:20px 0 4px;color:#2c3e50}
-h1 small{display:block;font-size:12px;color:#888;font-weight:400;margin-top:2px}
-.nav{display:flex;gap:8px;margin:12px 0 20px;background:#fff;border-radius:10px;padding:4px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.nav a{flex:1;text-align:center;padding:10px 0;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;color:#666;transition:all .2s}
-.nav a.active{background:#2196f3;color:#fff;box-shadow:0 2px 8px rgba(33,150,243,.3)}
-.nav a:not(.active):hover{background:#f0f0f0}
-.card{background:#fff;border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
-.card-title{font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:6px}
-.form-group{margin-bottom:14px}
-label{display:block;font-size:13px;font-weight:600;color:#555;margin-bottom:4px}
-input[type="text"],input[type="number"],textarea,select{width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;background:#fafbfc;transition:border-color .2s}
-input:focus,textarea:focus,select:focus{outline:none;border-color:#2196f3;background:#fff}
-textarea{resize:vertical;min-height:100px}
-.btn{display:block;width:100%;padding:12px;border:none;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s;text-align:center}
-.btn-primary{background:#4caf50;color:#fff}.btn-primary:hover{background:#43a047}
-.btn-warn{background:#ff9800;color:#fff}.btn-warn:hover{background:#f57c00}
-.btn-danger{background:#f44336;color:#fff}.btn-danger:hover{background:#d32f2f}
-.btn-blue{background:#2196f3;color:#fff}.btn-blue:hover{background:#1976d2}
-.btn-gray{background:#607d8b;color:#fff}.btn-gray:hover{background:#546e7a}
-.btn-purple{background:#9c27b0;color:#fff}.btn-purple:hover{background:#7b1fa2}
-.btn-teal{background:#009688;color:#fff}.btn-teal:hover{background:#00796b}
-.btn-sm{padding:8px 14px;font-size:13px;width:auto;display:inline-block}
-.btn:disabled{background:#ccc;cursor:not-allowed}
-.hint{font-size:12px;color:#888;margin-top:4px}
-.status-bar{background:linear-gradient(135deg,#e3f2fd,#bbdefb);border-radius:10px;padding:12px 14px;margin-bottom:16px;font-size:14px;color:#1565c0}
-.status-bar strong{margin:0 4px}
-.result-box{border-radius:8px;padding:10px 14px;font-size:14px;margin-top:10px;display:none}
-.result-success{background:#e8f5e9;color:#2e7d32;border-left:4px solid #4caf50}
-.result-error{background:#ffebee;color:#c62828;border-left:4px solid #f44336}
-.result-loading{background:#fff3e0;color:#e65100;border-left:4px solid #ff9800}
-.result-info{background:#e3f2fd;color:#1565c0;border-left:4px solid #2196f3}
-.inline-flex{display:flex;gap:8px;align-items:center}
-.inline-flex input{flex:1}
-.btn-group{display:flex;gap:10px;flex-wrap:wrap}
-.btn-group .btn,.btn-group button{flex:1;min-width:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;background:#f5f5f5;color:#1e1e1e;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:540px;margin:0 auto;padding:0 16px 40px}
+
+/* Header */
+.hdr{padding:28px 0 20px}
+.hdr h1{font-size:20px;font-weight:600;letter-spacing:-.3px}
+.hdr p{font-size:12px;color:#999;margin-top:2px}
+
+/* Tab bar */
+.tabs{display:flex;gap:0;background:#fff;border:1px solid #e5e5e5;border-radius:8px;overflow:hidden;margin-bottom:20px}
+.tab{flex:1;padding:10px 0;text-align:center;font-size:13px;font-weight:500;color:#999;cursor:pointer;border:none;background:none;transition:all .15s}
+.tab:not(:last-child){border-right:1px solid #e5e5e5}
+.tab.act{color:#1a73e8;background:#f0f6ff;font-weight:600}
+.tab:hover:not(.act){background:#fafafa}
+
+/* Panels */
+.panel{display:none}
+.panel.vis{display:block}
+
+/* Cards */
+.card{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:16px 18px;margin-bottom:14px}
+.card-title{font-size:14px;font-weight:600;color:#1e1e1e;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #f0f0f0}
+
+/* Form */
+.fg{margin-bottom:12px}
+.fg:last-child{margin-bottom:0}
+label.lbl{display:block;font-size:12px;font-weight:500;color:#666;margin-bottom:4px}
+input[type="text"],input[type="password"],input[type="number"],textarea,select{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;background:#fff;color:#1e1e1e;transition:border-color .15s;font-family:inherit}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#1a73e8}
+textarea{resize:vertical;min-height:72px}
+.hint{font-size:11px;color:#999;margin-top:3px}
+
+/* Buttons */
+.btn{display:block;width:100%;padding:10px;border:none;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;font-family:inherit}
+.btn-p{background:#1a73e8;color:#fff}
+.btn-p:hover{background:#1557b0}
+.btn-p:disabled{background:#ccc;cursor:not-allowed}
+.btn-s{background:#fff;color:#1e1e1e;border:1px solid #ddd}
+.btn-s:hover{background:#f5f5f5}
+.btn-d{background:#fff;color:#d32f2f;border:1px solid #f5c6cb}
+.btn-d:hover{background:#fff5f5}
+.btn-w{background:#e65100;color:#fff}
+.btn-w:hover{background:#bf360c}
+.btn-w:disabled{background:#ccc;cursor:not-allowed}
+.btn-row{display:flex;gap:8px;margin-top:12px}
+.btn-row .btn{flex:1}
+
+/* Result */
+.res{border-radius:6px;padding:8px 12px;font-size:12px;margin-top:10px;display:none}
+.res.ok{display:block;background:#e8f5e9;color:#2e7d32;border:1px solid #c8e6c9}
+.res.err{display:block;background:#ffebee;color:#c62828;border:1px solid #f5c6cb}
+.res.info{display:block;background:#e3f2fd;color:#1565c0;border:1px solid #bbdefb}
+.res.load{display:block;background:#fff3e0;color:#e65100;border:1px solid #ffe0b2}
+
+/* Status dashboard */
+.dash{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.dash-item{background:#fff;border:1px solid #e5e5e5;border-radius:8px;padding:12px 14px}
+.dash-label{font-size:11px;color:#999;margin-bottom:2px}
+.dash-val{font-size:16px;font-weight:600;color:#1e1e1e}
+.dash-val.sm{font-size:13px;font-weight:500}
+.dash-full{grid-column:1/-1}
+
+/* Info table */
 .info-table{width:100%;border-collapse:collapse;margin-top:8px}
-.info-table td{padding:6px 10px;border-bottom:1px solid #eee;font-size:14px}
-.info-table td:first-child{font-weight:600;width:40%;color:#555}
-.char-count{font-size:12px;color:#888;text-align:right;margin-top:2px}
-.error-box{background:#ffebee;border-radius:8px;padding:14px;color:#c62828;border-left:4px solid #f44336;margin-bottom:16px;display:none}
+.info-table td{padding:6px 10px;border-bottom:1px solid #f0f0f0;font-size:13px}
+.info-table td:first-child{font-weight:500;width:40%;color:#666}
+
+/* AT console */
+.at-log{background:#1e1e1e;color:#4ec9b0;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace;min-height:150px;max-height:260px;overflow-y:auto;padding:10px;border-radius:6px;font-size:12px;white-space:pre-wrap;word-break:break-all;margin-bottom:10px}
+.at-input{display:flex;gap:8px}
+.at-input input{flex:1;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace}
+.at-input button{width:auto;flex-shrink:0;padding:8px 16px}
+
 /* Schedule table */
-.sched-table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:13px}
-.sched-table th{background:#f5f5f5;padding:8px;text-align:left;font-weight:600;border-bottom:2px solid #ddd}
-.sched-table td{padding:8px;border-bottom:1px solid #eee;vertical-align:middle}
-.sched-table tr:hover{background:#fafbfc}
-.sched-empty{text-align:center;padding:24px;color:#888;font-size:14px}
-.sched-form{background:#fafbfc;border:1px solid #e0e0e0;border-radius:10px;padding:14px;margin-top:12px}
-.sched-form .form-group{margin-bottom:10px}
-.mode-fields{display:none;margin-top:8px}
-.mode-fields.active{display:block}
-/* modal overlay */
+.sched-table{width:100%;border-collapse:collapse;font-size:12px}
+.sched-table th{background:#f8f8f8;padding:8px 10px;text-align:left;font-weight:500;border-bottom:1px solid #e5e5e5;color:#666}
+.sched-table td{padding:8px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.sched-empty{text-align:center;padding:20px;color:#999;font-size:13px}
+
+/* Modal */
 .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:100;justify-content:center;align-items:center}
 .modal-overlay.show{display:flex}
-.modal-box{background:#fff;border-radius:14px;padding:20px;max-width:520px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.2)}
-.modal-box h3{margin-bottom:14px;font-size:17px}
-#atLog{background:#1e1e1e;color:#4ec9b0;font-family:"Courier New",monospace;min-height:150px;max-height:300px;overflow-y:auto;padding:10px;border-radius:8px;font-size:13px;white-space:pre-wrap;word-break:break-all;margin-bottom:10px}
-.at-input-group{display:flex;gap:10px}.at-input-group input{flex:1;font-family:monospace}.at-input-group button{width:auto;min-width:80px;margin:0}
+.modal-box{background:#fff;border-radius:10px;padding:20px;max-width:500px;width:90%;max-height:85vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.modal-box h3{margin-bottom:14px;font-size:15px;font-weight:600}
+
+/* Char count */
+.char-count{font-size:11px;color:#999;text-align:right;margin-top:2px}
+
+/* Responsive */
+@media(max-width:360px){
+  .tabs{flex-wrap:wrap}
+  .tab{flex:1 1 33%}
+  .dash{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
-<div class="container">
-<h1>📱 短信转发器<small>Toolbox</small></h1>
-<div class="nav">
-<a href="/">⚙️ 配置</a>
-<a href="/tools" class="active">🧰 工具</a>
+<div class="wrap">
+
+<div class="hdr">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div><h1>短信转发器</h1><p>Tools & Diagnostics</p></div>
+    <a href="/" style="font-size:12px;color:#1a73e8;text-decoration:none;padding:6px 12px;border:1px solid #1a73e8;border-radius:4px">配置</a>
+  </div>
 </div>
 
-<div class="status-bar" id="statusBar">
-设备IP: <strong id="devIp">…</strong> &nbsp;|&nbsp; WiFi: <strong id="wifiStatus">-</strong> &nbsp;|&nbsp; 配置: <strong id="cfgStatus">-</strong>
-</div>
-<div id="flashStatus" style="display:none;padding:10px;background:#f5f5f5;border-left:4px solid #9e9e9e;border-radius:6px;margin-bottom:16px;font-size:13px">Flash占用: <span id="flashUsageText">-</span></div>
-<div id="statusError" class="error-box" role="alert"><span id="statusErrorMsg"></span><br><button class="btn btn-blue btn-sm" onclick="loadStatus()" style="margin-top:8px">🔄 重试</button></div>
-
-<!-- 定时短信 -->
-<div class="card">
-<div class="card-title">⏰ 定时短信 <span id="schedSyncBadge" style="font-size:12px;font-weight:400;color:#888"></span></div>
-<div class="hint" style="margin-bottom:10px">创建定时短信任务，支持单次、每天、每周、每月和间隔模式。最多10个任务。</div>
-<div id="schedList"></div>
-<div style="display:flex;gap:8px;margin-top:8px">
-<button class="btn btn-blue" onclick="schedShowForm()" style="flex:1">➕ 新建任务</button>
-<button class="btn btn-gray btn-sm" onclick="loadSchedule()" style="flex:0">🔄</button>
-</div>
-<div id="schedResult" class="result-box"></div>
+<div id="errorBox" style="display:none;background:#ffebee;color:#c62828;border:1px solid #f5c6cb;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px">
+  <span id="errorMsg"></span>
+  <button onclick="loadAll()" style="margin-top:6px;background:#1a73e8;color:#fff;border:none;padding:6px 14px;border-radius:4px;font-size:12px;cursor:pointer">重试</button>
 </div>
 
-<!-- 发送短信 -->
-<div class="card">
-<div class="card-title">📤 发送短信</div>
-<div class="form-group"><label>目标号码</label><input type="text" id="smsPhone" placeholder="13800138000"></div>
-<div class="form-group"><label>短信内容</label><textarea id="smsContent" placeholder="请输入短信内容…" oninput="document.getElementById('charCount').textContent=this.value.length"></textarea><div class="char-count">已输入 <span id="charCount">0</span> 字符</div></div>
-<button type="button" id="sendSmsBtn" class="btn btn-primary" onclick="sendSms()">📨 发送短信</button>
-<div id="smsResult" class="result-box"></div>
+<div class="tabs" id="tabBar">
+  <button class="tab act" data-t="status">状态</button>
+  <button class="tab" data-t="sms">通信</button>
+  <button class="tab" data-t="diag">诊断</button>
+  <button class="tab" data-t="at">调试</button>
+  <button class="tab" data-t="maint">维护</button>
 </div>
 
-<!-- SOC 信息 -->
-<div class="card">
-<div class="card-title">🖥️ SOC 信息</div>
-<button type="button" class="btn btn-gray" onclick="querySoc()">🔍 查询 SOC 信息</button>
-<div id="socResult" class="result-box"></div>
+<!-- ============ Tab: 状态 ============ -->
+<div class="panel vis" data-panel="status">
+  <div class="dash">
+    <div class="dash-item">
+      <div class="dash-label">IP 地址</div>
+      <div class="dash-val" id="dIp">--</div>
+    </div>
+    <div class="dash-item">
+      <div class="dash-label">WiFi</div>
+      <div class="dash-val sm" id="dWifi">--</div>
+    </div>
+    <div class="dash-item">
+      <div class="dash-label">空闲内存</div>
+      <div class="dash-val sm" id="dHeap">--</div>
+    </div>
+    <div class="dash-item">
+      <div class="dash-label">运行时长</div>
+      <div class="dash-val sm" id="dUptime">--</div>
+    </div>
+    <div class="dash-item dash-full">
+      <div class="dash-label">Flash 使用</div>
+      <div class="dash-val sm" id="dFlash">--</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">快捷操作</div>
+    <div class="btn-row" style="margin-top:0">
+      <button class="btn btn-s" onclick="doPing()">Ping</button>
+      <button class="btn btn-d" onclick="doReboot()">重启设备</button>
+    </div>
+    <div id="quickResult" class="res"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">SOC 信息</div>
+    <button class="btn btn-s" onclick="loadSoc()">查询 SOC 信息</button>
+    <div id="socResult" class="res"></div>
+  </div>
 </div>
 
-<!-- 模组信息 -->
-<div class="card">
-<div class="card-title">📊 模组信息</div>
-<div class="btn-group" style="margin-bottom:10px">
-<button class="btn btn-purple" onclick="queryInfo('ati')">📋 固件信息</button>
-<button class="btn btn-purple" onclick="queryInfo('signal')">📶 信号质量</button>
-</div>
-<div class="btn-group" style="margin-bottom:10px">
-<button class="btn btn-gray" onclick="queryInfo('siminfo')">💳 SIM卡信息</button>
-<button class="btn btn-gray" onclick="queryInfo('network')">🌍 网络状态</button>
-</div>
-<div class="btn-group"><button class="btn btn-teal" onclick="queryInfo('wifi')">📡 WiFi状态</button></div>
-<div id="queryResult" class="result-box"></div>
+<!-- ============ Tab: 通信 ============ -->
+<div class="panel" data-panel="sms">
+  <div class="card">
+    <div class="card-title">发送短信</div>
+    <div class="fg"><label class="lbl">目标号码</label><input type="text" id="smsPhone" placeholder="13800138000"></div>
+    <div class="fg"><label class="lbl">短信内容</label><textarea id="smsContent" placeholder="请输入短信内容…" oninput="document.getElementById('charCount').textContent=this.value.length"></textarea><div class="char-count">已输入 <span id="charCount">0</span> 字符</div></div>
+    <button class="btn btn-p" id="sendSmsBtn" onclick="sendSms()">发送短信</button>
+    <div id="smsResult" class="res"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">定时短信 <span id="schedBadge" style="font-size:11px;font-weight:400;color:#999"></span></div>
+    <div class="hint" style="margin-bottom:10px">支持单次、每天、每周、每月和间隔模式，最多 10 个任务</div>
+    <div id="schedList"></div>
+    <div class="btn-row">
+      <button class="btn btn-p" onclick="schedShowForm()">新建任务</button>
+      <button class="btn btn-s" onclick="loadSchedule()" style="flex:0;padding:10px 14px">刷新</button>
+    </div>
+    <div id="schedResult" class="res"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">黑名单</div>
+    <div class="hint" style="margin-bottom:10px">来自黑名单号码的短信和来电将被忽略 (最多 20 个)</div>
+    <div id="blacklistItems" style="margin-bottom:10px"></div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="newBlNum" placeholder="输入号码" style="flex:1">
+      <button onclick="addBlackNum()" class="btn btn-s" style="width:auto;flex-shrink:0;padding:8px 14px">添加</button>
+    </div>
+    <button onclick="saveBlacklist()" class="btn btn-p" style="margin-top:10px">保存黑名单</button>
+    <div id="blacklistResult" class="res"></div>
+  </div>
 </div>
 
-<!-- 网络测试 -->
-<div class="card">
-<div class="card-title">🌐 网络测试</div>
-<button type="button" class="btn btn-warn" id="pingBtn" onclick="confirmPing()">📡 Ping 8.8.8.8</button>
-<div class="hint">消耗少量流量</div>
-<div id="pingResult" class="result-box"></div>
+<!-- ============ Tab: 诊断 ============ -->
+<div class="panel" data-panel="diag">
+  <div class="card">
+    <div class="card-title">模组信息</div>
+    <div class="btn-row" style="margin-top:0">
+      <button class="btn btn-s" onclick="queryInfo('ati')">固件信息</button>
+      <button class="btn btn-s" onclick="queryInfo('signal')">信号质量</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-s" onclick="queryInfo('siminfo')">SIM 卡</button>
+      <button class="btn btn-s" onclick="queryInfo('network')">网络状态</button>
+    </div>
+    <button class="btn btn-s" onclick="queryInfo('wifi')" style="margin-top:8px">WiFi 状态</button>
+    <div id="queryResult" class="res"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">网络测试</div>
+    <button class="btn btn-w" id="pingBtn" onclick="confirmPing()">Ping 8.8.8.8</button>
+    <div class="hint">将消耗少量流量</div>
+    <div id="pingResult" class="res"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">飞行模式</div>
+    <div class="btn-row" style="margin-top:0">
+      <button class="btn btn-s" onclick="queryFlightMode()">查询状态</button>
+      <button class="btn btn-d" id="flightBtn" onclick="toggleFlightMode()">切换飞行模式</button>
+    </div>
+    <div class="hint">飞行模式下无法收发短信</div>
+    <div id="flightResult" class="res"></div>
+  </div>
 </div>
 
-<!-- 模组控制 -->
-<div class="card">
-<div class="card-title">✈️ 模组控制</div>
-<div class="btn-group">
-<button type="button" id="flightBtn" class="btn btn-danger" onclick="toggleFlightMode()">✈️ 切换飞行模式</button>
-<button type="button" class="btn btn-purple" onclick="queryFlightMode()">🔍 查询状态</button>
-</div>
-<div class="hint">飞行模式下无法收发短信</div>
-<div id="flightResult" class="result-box"></div>
-</div>
-
-<!-- AT调试 -->
-<div class="card">
-<div class="card-title">💻 AT 指令调试</div>
-<div id="atLog">等待输入指令…</div>
-<div class="at-input-group">
-<input type="text" id="atCmd" placeholder="AT+CSQ" onkeydown="if(event.key==='Enter')sendAT()">
-<button type="button" onclick="sendAT()" id="atBtn">发送</button>
-</div>
-<div class="btn-group" style="margin-top:10px"><button type="button" class="btn btn-sm btn-gray" onclick="clearATLog()">🧹 清空</button></div>
-<div class="hint">直接向模组发送AT指令，请谨慎操作</div>
+<!-- ============ Tab: 调试 ============ -->
+<div class="panel" data-panel="at">
+  <div class="card">
+    <div class="card-title">AT 指令调试</div>
+    <div id="atLog" class="at-log">等待输入指令…</div>
+    <div class="at-input">
+      <input type="text" id="atCmd" placeholder="AT+CSQ" onkeydown="if(event.key==='Enter')sendAT()">
+      <button class="btn btn-p" onclick="sendAT()" id="atBtn" style="width:auto">发送</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-s" onclick="clearATLog()">清空日志</button>
+    </div>
+    <div class="hint">直接向模组发送 AT 指令，请谨慎操作</div>
+  </div>
 </div>
 
-<!-- OTA -->
-<div class="card" id="otaSection">
-<div class="card-title">🔄 固件升级</div>
-<div id="otaVersionInfo" style="margin-bottom:12px"><table class="info-table"><tr><td>当前版本</td><td id="otaCurVer">获取中…</td></tr><tr><td>最新版本</td><td id="otaLatestVer">检查中…</td></tr></table></div>
-<div id="otaProgress" class="result-box" style="display:none"></div>
-<div id="otaOnlineArea" style="margin-top:10px"><button type="button" id="otaOnlineBtn" class="btn btn-primary" onclick="startOnlineUpgrade()" disabled>🌐 在线升级</button><div id="otaUpToDate" class="hint" style="color:#4caf50;display:none">✅ 已是最新版本</div></div>
-<div style="margin-top:15px;border-top:1px solid #eee;padding-top:12px"><label style="font-weight:700;display:block;margin-bottom:5px">手动上传固件（ota-*.bin）</label><input type="file" id="otaFile" accept=".bin" style="margin-bottom:8px"><button type="button" id="otaUploadBtn" class="btn btn-warn" onclick="startManualUpgrade()">📂 手动升级固件</button></div>
-<div style="margin-top:12px;border-top:1px solid #eee;padding-top:12px"><label style="font-weight:700;display:block;margin-bottom:5px">单独更新 Web UI（littlefs-*.bin）</label><input type="file" id="otaFsFile" accept=".bin" style="margin-bottom:8px"><button type="button" id="otaUploadFsBtn" class="btn btn-gray" onclick="startManualLfsUpgrade()">📂 手动更新 Web UI</button></div>
-<div class="hint" style="margin-top:8px;color:#e65100">⚠️ 升级期间请勿断电</div>
+<!-- ============ Tab: 维护 ============ -->
+<div class="panel" data-panel="maint">
+  <div class="card" id="otaSection">
+    <div class="card-title">固件升级</div>
+    <table class="info-table" style="margin-bottom:12px">
+      <tr><td>当前版本</td><td id="otaCurVer">获取中…</td></tr>
+      <tr><td>最新版本</td><td id="otaLatestVer">检查中…</td></tr>
+    </table>
+    <div id="otaProgress" class="res" style="display:none"></div>
+    <div id="otaOnlineArea" style="margin-top:10px">
+      <button class="btn btn-p" id="otaOnlineBtn" onclick="startOnlineUpgrade()" disabled>在线升级</button>
+      <div id="otaUpToDate" class="hint" style="color:#2e7d32;display:none">已是最新版本</div>
+    </div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid #f0f0f0">
+      <label class="lbl">手动上传固件 (ota-*.bin)</label>
+      <input type="file" id="otaFile" accept=".bin" style="margin-bottom:8px;font-size:12px">
+      <button class="btn btn-w" id="otaUploadBtn" onclick="startManualUpgrade()">上传固件</button>
+    </div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid #f0f0f0">
+      <label class="lbl">更新 Web UI (littlefs-*.bin)</label>
+      <input type="file" id="otaFsFile" accept=".bin" style="margin-bottom:8px;font-size:12px">
+      <button class="btn btn-s" id="otaUploadFsBtn" onclick="startManualLfsUpgrade()">上传 Web UI</button>
+    </div>
+    <div class="hint" style="color:#e65100;margin-top:8px">升级期间请勿断电</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">日志管理</div>
+    <div class="btn-row" style="margin-top:0">
+      <button class="btn btn-s" onclick="openLogs()">打开日志</button>
+      <button class="btn btn-d" id="clearLogsBtn" onclick="clearLogs()">清除日志</button>
+    </div>
+    <div id="logsResult" class="res"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">崩溃记录</div>
+    <div id="coredumpInfo" style="display:none;margin-bottom:10px;padding:10px;background:#fff8e1;border:1px solid #ffe0b2;border-radius:6px;font-size:12px;color:#e65100"></div>
+    <button class="btn btn-s" id="exportCoredumpBtn" onclick="exportCoreDump()">导出 coredump</button>
+    <div class="hint">崩溃记录可远程分析，请谨慎分享</div>
+    <div id="coredumpResult" class="res"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">配置管理</div>
+    <button class="btn btn-p" onclick="exportConfig()">导出配置</button>
+    <div class="hint" style="color:#e65100;margin-bottom:12px">导出文件包含密码，请妥善保管</div>
+    <div style="padding-top:12px;border-top:1px solid #f0f0f0">
+      <label class="lbl">导入配置 (.json)</label>
+      <input type="file" id="importFile" accept=".json" style="margin-bottom:8px;font-size:12px">
+      <button class="btn btn-w" id="importBtn" onclick="importConfig()">导入配置</button>
+    </div>
+    <div id="importResult" class="res"></div>
+    <div style="margin-top:14px;padding-top:12px;border-top:1px solid #f0f0f0">
+      <button class="btn btn-d" id="resetBtn" onclick="resetConfig()">重置所有配置</button>
+      <div class="hint" style="color:#e65100">不可撤销，设备将自动重启</div>
+    </div>
+    <div id="resetResult" class="res"></div>
+  </div>
 </div>
 
-<!-- 日志 -->
-<div class="card">
-<div class="card-title">📋 日志管理</div>
-<div class="btn-group">
-<button class="btn btn-teal" onclick="openLogs()">📄 打开日志</button>
-<button class="btn btn-danger" id="clearLogsBtn" onclick="clearLogs()">🗑️ 清除日志</button>
-</div>
-<div class="hint">日志在新标签页打开</div>
-<div id="logsResult" class="result-box"></div>
-</div>
-
-<!-- 设备管理 -->
-<div class="card">
-<div class="card-title">🖥️ 设备管理</div>
-<div class="form-group"><button type="button" id="rebootBtn" class="btn btn-danger" onclick="rebootDevice()">🔁 重启设备</button><div class="hint">重启后约20秒恢复</div></div>
-<div class="form-group" style="margin-top:15px"><button type="button" id="exportCoredumpBtn" class="btn btn-gray" onclick="exportCoreDump()">📦 导出 coredump</button><div class="hint">崩溃记录可远程分析，请谨慎分享</div><div id="coredumpInfoCard" style="display:none;margin-top:8px;padding:10px;background:#fff3e0;border-left:4px solid #ff9800;border-radius:6px;font-size:13px;color:#e65100"></div><div id="coredumpResult" class="result-box"></div></div>
-</div>
-
-<!-- 配置管理 -->
-<div class="card">
-<div class="card-title">🗂️ 配置管理</div>
-<div class="btn-group" style="margin-bottom:12px"><button class="btn btn-primary" onclick="exportConfig()">📥 导出配置</button></div>
-<div class="hint" style="color:#e65100;margin-bottom:12px">⚠️ 导出文件包含密码，请妥善保管</div>
-<div class="form-group"><label>导入配置（.json）</label><input type="file" id="importFile" accept=".json" style="margin-bottom:8px"><button type="button" id="importBtn" class="btn btn-warn" onclick="importConfig()">📤 导入配置</button></div>
-<div id="importResult" class="result-box"></div>
-<div style="margin-top:15px;border-top:1px solid #eee;padding-top:15px"><button type="button" id="resetBtn" class="btn btn-danger" onclick="resetConfig()">🗑️ 重置配置</button><div class="hint" style="color:#e65100">⚠️ 不可撤销，设备将自动重启</div></div>
-<div id="resetResult" class="result-box"></div>
-</div>
 </div>
 
 <!-- Schedule modal -->
 <div class="modal-overlay" id="schedModal">
 <div class="modal-box">
-<h3 id="schedModalTitle">新建定时短信任务</h3>
-<div class="sched-form">
-<div class="form-group"><label>目标号码</label><input type="text" id="schedPhone" placeholder="13800138000"></div>
-<div class="form-group"><label>短信内容</label><textarea id="schedMsg" placeholder="请输入短信内容…" style="min-height:70px"></textarea></div>
-<div class="form-group"><label>调度模式</label>
-<select id="schedMode" onchange="schedToggleMode()">
-<option value="0">单次</option>
-<option value="1" selected>每天</option>
-<option value="2">每周</option>
-<option value="3">每月</option>
-<option value="4">间隔</option>
-</select></div>
-<div id="schedOnceFields" class="mode-fields">
-<div class="form-group"><label>触发时间</label><input type="datetime-local" id="schedOnceTime"></div>
-</div>
-<div id="schedDailyFields" class="mode-fields active">
-<div class="inline-flex" style="gap:8px"><input type="number" id="schedHour" min="0" max="23" value="9" style="width:70px"><span>时</span><input type="number" id="schedMinute" min="0" max="59" value="0" style="width:70px"><span>分</span></div>
-</div>
-<div id="schedWeeklyFields" class="mode-fields">
-<div class="form-group"><label>星期</label>
-<select id="schedWeekday"><option value="0">周日</option><option value="1">周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option><option value="6">周六</option></select></div>
-<div class="inline-flex" style="gap:8px"><input type="number" id="schedWeeklyHour" min="0" max="23" value="9" style="width:70px"><span>时</span><input type="number" id="schedWeeklyMin" min="0" max="59" value="0" style="width:70px"><span>分</span></div>
-</div>
-<div id="schedMonthlyFields" class="mode-fields">
-<div class="form-group"><label>每月第几天</label><input type="number" id="schedMonthDay" min="1" max="31" value="1"></div>
-<div class="inline-flex" style="gap:8px;margin-top:8px"><input type="number" id="schedMonthlyHour" min="0" max="23" value="9" style="width:70px"><span>时</span><input type="number" id="schedMonthlyMin" min="0" max="59" value="0" style="width:70px"><span>分</span></div>
-</div>
-<div id="schedIntervalFields" class="mode-fields">
-<div class="form-group"><label>间隔（分钟）</label><input type="number" id="schedInterval" min="1" value="60"></div>
-</div>
-<div class="btn-group" style="margin-top:14px">
-<button class="btn btn-primary" onclick="schedSave()">💾 保存</button>
-<button class="btn btn-gray" onclick="schedCloseModal()">取消</button>
-</div>
-</div>
+  <h3 id="schedModalTitle">新建定时短信任务</h3>
+  <div class="fg"><label class="lbl">目标号码</label><input type="text" id="schedPhone" placeholder="13800138000"></div>
+  <div class="fg"><label class="lbl">短信内容</label><textarea id="schedMsg" placeholder="请输入短信内容…" style="min-height:60px"></textarea></div>
+  <div class="fg"><label class="lbl">调度模式</label>
+    <select id="schedMode" onchange="schedToggleMode()">
+      <option value="0">单次</option>
+      <option value="1" selected>每天</option>
+      <option value="2">每周</option>
+      <option value="3">每月</option>
+      <option value="4">间隔</option>
+    </select>
+  </div>
+  <div id="schedOnceFields" style="display:none">
+    <div class="fg"><label class="lbl">触发时间</label><input type="datetime-local" id="schedOnceTime"></div>
+  </div>
+  <div id="schedDailyFields">
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="number" id="schedHour" min="0" max="23" value="9" style="width:70px"><span style="font-size:12px;color:#666">时</span>
+      <input type="number" id="schedMinute" min="0" max="59" value="0" style="width:70px"><span style="font-size:12px;color:#666">分</span>
+    </div>
+  </div>
+  <div id="schedWeeklyFields" style="display:none">
+    <div class="fg"><label class="lbl">星期</label>
+      <select id="schedWeekday"><option value="0">周日</option><option value="1">周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option><option value="6">周六</option></select>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input type="number" id="schedWeeklyHour" min="0" max="23" value="9" style="width:70px"><span style="font-size:12px;color:#666">时</span>
+      <input type="number" id="schedWeeklyMin" min="0" max="59" value="0" style="width:70px"><span style="font-size:12px;color:#666">分</span>
+    </div>
+  </div>
+  <div id="schedMonthlyFields" style="display:none">
+    <div class="fg"><label class="lbl">每月第几天</label><input type="number" id="schedMonthDay" min="1" max="31" value="1"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+      <input type="number" id="schedMonthlyHour" min="0" max="23" value="9" style="width:70px"><span style="font-size:12px;color:#666">时</span>
+      <input type="number" id="schedMonthlyMin" min="0" max="59" value="0" style="width:70px"><span style="font-size:12px;color:#666">分</span>
+    </div>
+  </div>
+  <div id="schedIntervalFields" style="display:none">
+    <div class="fg"><label class="lbl">间隔 (分钟)</label><input type="number" id="schedInterval" min="1" value="60"></div>
+  </div>
+  <div class="btn-row" style="margin-top:14px">
+    <button class="btn btn-p" onclick="schedSave()">保存</button>
+    <button class="btn btn-s" onclick="schedCloseModal()">取消</button>
+  </div>
 </div>
 </div>
 
 <script>
-var SCHED_MODES=[{v:0,l:"单次"},{v:1,l:"每天"},{v:2,l:"每周"},{v:3,l:"每月"},{v:4,l:"间隔"}];
-var schedEditIdx=-1;
-var schedData=[];
+/* ===== Tabs ===== */
+document.getElementById("tabBar").addEventListener("click",function(e){
+  var btn=e.target.closest(".tab");if(!btn)return;
+  document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("act")});
+  btn.classList.add("act");
+  document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("vis")});
+  document.querySelector('[data-panel="'+btn.dataset.t+'"]').classList.add("vis");
+});
 
+/* ===== Helpers ===== */
+function showRes(el,ok,msg){el.className="res "+(ok?"ok":"err");el.textContent=(ok?"":"错误: ")+msg;el.style.display="block"}
+function esc(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
 function fmt(b){if(b>=1048576)return(b/1048576).toFixed(2)+" MB";return(b/1024).toFixed(1)+" KB"}
+function fmtUptime(s){if(s<60)return s+"秒";if(s<3600)return Math.floor(s/60)+"分"+(s%60)+"秒";var h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h+"时"+m+"分"}
 
-function schedToggleMode(){var m=parseInt(document.getElementById("schedMode").value);var ids=["schedOnceFields","schedDailyFields","schedWeeklyFields","schedMonthlyFields","schedIntervalFields"];ids.forEach(function(id){document.getElementById(id).classList.remove("active")});document.getElementById(ids[m]).classList.add("active")}
+/* ===== Status ===== */
+function loadStatus(){
+  document.getElementById("errorBox").style.display="none";
+  return fetch("/api/status").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){
+    document.getElementById("dIp").textContent=d.ip||"--";
+    document.getElementById("dWifi").textContent=d.wifiConnected?"已连接":"未连接";
+  }).catch(function(e){
+    document.getElementById("errorMsg").textContent="无法加载状态: "+e.message;
+    document.getElementById("errorBox").style.display="block";
+  });
+}
 
-function schedShowForm(idx){schedEditIdx=(idx!==undefined)?idx:-1;var task=null;if(idx!==undefined&&idx>=0&&idx<schedData.length)task=schedData[idx];document.getElementById("schedModalTitle").textContent=task?"编辑定时短信任务":"新建定时短信任务";document.getElementById("schedPhone").value=task?task.phone:"";document.getElementById("schedMsg").value=task?task.message:"";document.getElementById("schedMode").value=task?String(task.mode):"1";if(task&&task.mode===0){var d=new Date(task.nextFire*1000);document.getElementById("schedOnceTime").value=d.toISOString().slice(0,16)}else{document.getElementById("schedOnceTime").value=""}document.getElementById("schedHour").value=task?task.hour:9;document.getElementById("schedMinute").value=task?task.minute:0;document.getElementById("schedWeekday").value=task?String(task.weekday):"1";document.getElementById("schedWeeklyHour").value=task?task.hour:9;document.getElementById("schedWeeklyMin").value=task?task.minute:0;document.getElementById("schedMonthDay").value=task?task.monthDay:1;document.getElementById("schedMonthlyHour").value=task?task.hour:9;document.getElementById("schedMonthlyMin").value=task?task.minute:0;document.getElementById("schedInterval").value=task?task.intervalMin:60;schedToggleMode();document.getElementById("schedModal").classList.add("show")}
+function loadSoc(){
+  var el=document.getElementById("socResult");
+  el.className="res load";el.textContent="正在查询…";el.style.display="block";
+  fetch("/api/soc").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){
+    document.getElementById("dHeap").textContent=fmt(d.freeHeap);
+    document.getElementById("dUptime").textContent=fmtUptime(d.uptimeSeconds);
+    var free=d.flashTotal-d.flashUsed;
+    document.getElementById("dFlash").textContent=fmt(d.flashUsed)+" / "+fmt(d.flashTotal)+"，剩余 "+fmt(free);
+    el.className="res info";
+    el.innerHTML='<table class="info-table"><tr><td>空闲堆内存</td><td>'+fmt(d.freeHeap)+'</td></tr><tr><td>最小剩余堆</td><td>'+fmt(d.minFreeHeap)+'</td></tr><tr><td>Flash 总量</td><td>'+fmt(d.flashTotal)+'</td></tr><tr><td>Flash 已用</td><td>'+fmt(d.flashUsed)+'</td></tr><tr><td>LittleFS 总量</td><td>'+fmt(d.fsTotal)+'</td></tr><tr><td>LittleFS 已用</td><td>'+fmt(d.fsUsed)+'</td></tr><tr><td>CPU 频率</td><td>'+d.cpuFreqMHz+' MHz</td></tr><tr><td>芯片 ID</td><td>'+d.chipId+'</td></tr><tr><td>运行时长</td><td>'+fmtUptime(d.uptimeSeconds)+'</td></tr></table>';
+  }).catch(function(e){el.className="res err";el.textContent="错误: "+e.message});
+}
 
-function schedCloseModal(){document.getElementById("schedModal").classList.remove("show")}
+/* ===== Quick actions ===== */
+function doPing(){
+  var el=document.getElementById("quickResult");
+  el.className="res load";el.textContent="正在 Ping…";el.style.display="block";
+  fetch("/ping",{method:"POST"}).then(function(r){return r.json()}).then(function(d){
+    showRes(el,!!d.ok,d.ok?d.message:(d.error||d.message||"Ping 失败"));
+  }).catch(function(e){el.className="res err";el.textContent="错误: "+e.message});
+}
 
-function schedSave(){var m=parseInt(document.getElementById("schedMode").value);var phone=document.getElementById("schedPhone").value.trim();var msg=document.getElementById("schedMsg").value.trim();if(!phone){showResult("schedResult",false,"号码不能为空");schedCloseModal();return}if(!msg){showResult("schedResult",false,"内容不能为空");schedCloseModal();return}if(msg.length>160){showResult("schedResult",false,"内容不能超过160字符");schedCloseModal();return}var task={enabled:true,mode:m,phone:phone,message:msg,hour:0,minute:0,weekday:0,monthDay:1,intervalMin:60,nextFire:0};if(m===0){var t=document.getElementById("schedOnceTime").value;if(!t){showResult("schedResult",false,"请选择触发时间");schedCloseModal();return}task.nextFire=Math.floor(new Date(t).getTime()/1000);if(task.nextFire<=0){showResult("schedResult",false,"触发时间无效");schedCloseModal();return}}else if(m===1){task.hour=parseInt(document.getElementById("schedHour").value)||0;task.minute=parseInt(document.getElementById("schedMinute").value)||0}else if(m===2){task.weekday=parseInt(document.getElementById("schedWeekday").value)||0;task.hour=parseInt(document.getElementById("schedWeeklyHour").value)||0;task.minute=parseInt(document.getElementById("schedWeeklyMin").value)||0}else if(m===3){task.monthDay=parseInt(document.getElementById("schedMonthDay").value)||1;task.hour=parseInt(document.getElementById("schedMonthlyHour").value)||0;task.minute=parseInt(document.getElementById("schedMonthlyMin").value)||0}else if(m===4){task.intervalMin=parseInt(document.getElementById("schedInterval").value)||60}var action=schedEditIdx>=0?"update":"create";var body={action:action,task:task};if(schedEditIdx>=0)body.index=schedEditIdx;fetch("/api/schedule",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){if(d.ok){showResult("schedResult",true,d.message||"操作成功");loadSchedule()}else{showResult("schedResult",false,d.error||"操作失败")}}).catch(function(e){showResult("schedResult",false,"请求失败: "+e.message)});schedCloseModal()}
+function doReboot(){
+  if(!confirm("确定要重启设备吗？\n期间无法收发短信。"))return;
+  var el=document.getElementById("quickResult");
+  el.className="res load";el.textContent="正在获取凭证…";el.style.display="block";
+  fetch("/api/tools/reset-token").then(function(r){return r.json()}).then(function(d){
+    el.textContent="正在重启…";
+    return fetch("/api/tools/reboot",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:d.token})});
+  }).then(function(r){return r.json()}).then(function(d){
+    if(d.ok){el.className="res ok";el.textContent=d.message+"，设备将在几秒后重启"}
+    else{el.className="res err";el.textContent="错误: "+(d.error||"重启失败")}
+  }).catch(function(e){el.className="res err";el.textContent="错误: "+e.message});
+}
 
-function schedToggle(idx,enable){fetch("/api/schedule",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:enable?"enable":"disable",index:idx})}).then(function(r){return r.json()}).then(function(d){if(d.ok)loadSchedule();else showResult("schedResult",false,d.error||"操作失败")}).catch(function(e){showResult("schedResult",false,"请求失败: "+e.message)})}
+/* ===== Send SMS ===== */
+function sendSms(){
+  var phone=document.getElementById("smsPhone").value.trim();
+  var content=document.getElementById("smsContent").value.trim();
+  var el=document.getElementById("smsResult");
+  var btn=document.getElementById("sendSmsBtn");
+  if(!phone||!content){el.className="res err";el.textContent="错误: 请填写手机号和短信内容";el.style.display="block";return}
+  btn.disabled=true;btn.textContent="发送中…";
+  el.className="res load";el.textContent="正在发送…";el.style.display="block";
+  var fd=new FormData();fd.append("phone",phone);fd.append("content",content);
+  fetch("/sendsms",{method:"POST",body:fd}).then(function(r){return r.json()}).then(function(d){
+    btn.disabled=false;btn.textContent="发送短信";
+    showRes(el,!!d.ok,d.ok?"发送成功":(d.error||d.message||"发送失败"));
+  }).catch(function(e){btn.disabled=false;btn.textContent="发送短信";el.className="res err";el.textContent="错误: "+e.message});
+}
 
-function schedDelete(idx){if(!confirm("确认删除此定时短信任务？"))return;fetch("/api/schedule",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"delete",index:idx})}).then(function(r){return r.json()}).then(function(d){if(d.ok)loadSchedule();else showResult("schedResult",false,d.error||"删除失败")}).catch(function(e){showResult("schedResult",false,"请求失败: "+e.message)})}
+/* ===== Query info ===== */
+function queryInfo(type){
+  var el=document.getElementById("queryResult");
+  el.className="res load";el.textContent="正在查询…";el.style.display="block";
+  fetch("/query?type="+encodeURIComponent(type)).then(function(r){return r.json()}).then(function(d){
+    if(d.ok){el.className="res info";el.innerHTML=d.message}
+    else{el.className="res err";el.textContent="错误: "+(d.error||d.message||"查询失败")}
+  }).catch(function(e){el.className="res err";el.textContent="错误: "+e.message});
+}
 
-function renderSchedule(){var c=document.getElementById("schedList");var badge=document.getElementById("schedSyncBadge");badge.textContent=schedData.length>0?("("+schedData.length+"/"+10+")"):"";if(schedData.length===0){c.innerHTML='<div class="sched-empty">暂无定时短信任务</div>';return}var h='<table class="sched-table"><tr><th>启用</th><th>模式</th><th>号码</th><th>内容</th><th>操作</th></tr>';for(var i=0;i<schedData.length;i++){var t=schedData[i];var label=SCHED_MODES.find(function(m){return m.v===t.mode});var ml=label?label.l:"?";h+='<tr><td><input type="checkbox" '+(t.enabled?"checked":"")+' onchange="schedToggle('+i+',this.checked)"></td><td style="font-size:12px">'+ml+'</td><td style="font-size:12px">'+escHtml(t.phone)+'</td><td style="font-size:12px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+escHtml(t.message)+'</td><td><button class="btn btn-sm btn-gray" onclick="schedShowForm('+i+')" style="margin-right:4px;padding:4px 8px">✏️</button><button class="btn btn-sm btn-danger" onclick="schedDelete('+i+')" style="padding:4px 8px">🗑</button></td></tr>'}h+='</table>';c.innerHTML=h}
+/* ===== Ping ===== */
+function confirmPing(){if(!confirm("确定要执行 Ping 吗？\n将消耗少量流量。"))return;doPingDiag()}
+function doPingDiag(){
+  var btn=document.getElementById("pingBtn");var el=document.getElementById("pingResult");
+  btn.disabled=true;btn.textContent="Ping 中…";
+  el.className="res load";el.textContent="正在 Ping，请稍候…";el.style.display="block";
+  fetch("/ping",{method:"POST"}).then(function(r){return r.json()}).then(function(d){
+    btn.disabled=false;btn.textContent="Ping 8.8.8.8";
+    showRes(el,!!d.ok,d.ok?d.message:(d.error||d.message||"Ping 失败"));
+  }).catch(function(e){btn.disabled=false;btn.textContent="Ping 8.8.8.8";el.className="res err";el.textContent="错误: "+e.message});
+}
 
-function loadSchedule(){fetch("/api/schedule").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){schedData=d.tasks||[];var badge=document.getElementById("schedSyncBadge");badge.textContent=d.timeSynced?("("+schedData.length+"/"+d.maxCount+")"):"("+schedData.length+"/"+d.maxCount+") ⚠️时间未同步";renderSchedule()}).catch(function(e){document.getElementById("schedList").innerHTML='<div class="sched-empty" style="color:#c62828">加载失败: '+e.message+'</div>'})}
+/* ===== Flight mode ===== */
+function queryFlightMode(){
+  var el=document.getElementById("flightResult");
+  el.className="res load";el.textContent="正在查询…";el.style.display="block";
+  fetch("/flight?action=query").then(function(r){return r.json()}).then(function(d){
+    if(d.ok){el.className="res info";el.innerHTML=d.message}
+    else{el.className="res err";el.textContent="错误: "+(d.error||d.message||"查询失败")}
+  }).catch(function(e){el.className="res err";el.textContent="错误: "+e.message});
+}
+function toggleFlightMode(){
+  if(!confirm("确定要切换飞行模式吗？\n飞行模式下无法收发短信。"))return;
+  var btn=document.getElementById("flightBtn");var el=document.getElementById("flightResult");
+  btn.disabled=true;
+  el.className="res load";el.textContent="正在切换…";el.style.display="block";
+  fetch("/flight?action=toggle").then(function(r){return r.json()}).then(function(d){
+    btn.disabled=false;
+    showRes(el,!!d.ok,d.ok?d.message:(d.error||d.message||"切换失败"));
+  }).catch(function(e){btn.disabled=false;el.className="res err";el.textContent="错误: "+e.message});
+}
 
-function escHtml(s){return(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
-
-function loadStatus(){document.getElementById("statusError").style.display="none";fetch("/api/status").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){document.getElementById("devIp").textContent=d.ip||"-";document.getElementById("wifiStatus").textContent=d.wifiConnected?"已连接":"未连接";document.getElementById("cfgStatus").textContent=d.configValid?"有效":"未配置"}).catch(function(e){document.getElementById("statusErrorMsg").textContent="无法获取设备状态（"+e.message+"）";document.getElementById("statusError").style.display="block"})}
-
-function loadSoc(){fetch("/api/soc").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){if(d.flashTotal===undefined)return;var free=d.flashTotal-d.flashUsed;var threshold=Math.min(d.flashTotal*0.1,50*1024);var isWarn=free<threshold;document.getElementById("flashUsageText").textContent=fmt(d.flashUsed)+" / "+fmt(d.flashTotal)+"，剩余 "+fmt(free);var el=document.getElementById("flashStatus");el.style.display="block";el.style.borderLeftColor=isWarn?"#ffc107":"#9e9e9e";el.style.background=isWarn?"#fff3cd":"#f5f5f5"}).catch(function(){})}
-
-function sendSms(){var phone=document.getElementById("smsPhone").value.trim();var content=document.getElementById("smsContent").value.trim();var result=document.getElementById("smsResult");var btn=document.getElementById("sendSmsBtn");if(!phone||!content){result.className="result-box result-error";result.style.display="block";result.textContent="❌ 请填写手机号和短信内容";return}btn.disabled=true;btn.textContent="⏳ 发送中…";result.className="result-box result-loading";result.style.display="block";result.textContent="正在发送…";var form=new FormData();form.append("phone",phone);form.append("content",content);fetch("/sendsms",{method:"POST",body:form}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){btn.disabled=false;btn.textContent="📨 发送短信";if(d.ok){result.className="result-box result-success";result.innerHTML="✅ 发送成功！<br>"+(d.message||"")}else{result.className="result-box result-error";result.innerHTML="❌ 发送失败<br>"+(d.error||d.message||"")}}).catch(function(e){btn.disabled=false;btn.textContent="📨 发送短信";result.className="result-box result-error";result.textContent="❌ 请求失败: "+e.message})}
-
-function querySoc(){var btn=document.getElementById("socBtn");var r=document.getElementById("socResult");r.className="result-box result-loading";r.style.display="block";r.textContent="正在查询…";fetch("/api/soc").then(function(r2){if(!r2.ok)throw new Error("HTTP "+r2.status);return r2.json()}).then(function(d){r.className="result-box result-info";r.innerHTML='<table class="info-table"><tr><td>空闲堆内存</td><td>'+fmt(d.freeHeap)+'</td></tr><tr><td>最小剩余堆</td><td>'+fmt(d.minFreeHeap)+'</td></tr><tr><td>Flash 总量</td><td>'+fmt(d.flashTotal)+'</td></tr><tr><td>Flash 已用</td><td>'+fmt(d.flashUsed)+'</td></tr><tr><td>LittleFS 总量</td><td>'+fmt(d.fsTotal)+'</td></tr><tr><td>LittleFS 已用</td><td>'+fmt(d.fsUsed)+'</td></tr><tr><td>CPU 频率</td><td>'+d.cpuFreqMHz+' MHz</td></tr><tr><td>芯片 ID</td><td>'+d.chipId+'</td></tr><tr><td>运行时长</td><td>'+d.uptimeSeconds+' 秒</td></tr></table>'}).catch(function(e){r.className="result-box result-error";r.textContent="❌ 查询失败: "+e.message})}
-
-function queryInfo(type){var r=document.getElementById("queryResult");r.className="result-box result-loading";r.style.display="block";r.textContent="正在查询…";fetch("/query?type="+encodeURIComponent(type)).then(function(r2){if(!r2.ok)throw new Error("HTTP "+r2.status);return r2.json()}).then(function(d){if(d.ok){r.className="result-box result-info";r.innerHTML=d.message}else{r.className="result-box result-error";r.innerHTML="❌ 查询失败<br>"+(d.error||d.message||"")}}).catch(function(e){r.className="result-box result-error";r.textContent="❌ 请求失败: "+e.message})}
-
-function confirmPing(){if(!confirm("确定要执行 Ping 吗？\n将消耗少量流量。"))return;doPing()}
-function doPing(){var btn=document.getElementById("pingBtn");var r=document.getElementById("pingResult");btn.disabled=true;btn.textContent="⏳ Ping…";r.className="result-box result-loading";r.style.display="block";r.textContent="正在Ping，请稍候…";fetch("/ping",{method:"POST"}).then(function(r2){if(!r2.ok)throw new Error("HTTP "+r2.status);return r2.json()}).then(function(d){btn.disabled=false;btn.textContent="📡 Ping";if(d.ok){r.className="result-box result-success";r.innerHTML="✅ Ping 成功！<br>"+d.message}else{r.className="result-box result-error";r.innerHTML="❌ Ping 失败<br>"+(d.error||d.message||"")}}).catch(function(e){btn.disabled=false;btn.textContent="📡 Ping";r.className="result-box result-error";r.textContent="❌ 请求失败: "+e.message})}
-
-function queryFlightMode(){var r=document.getElementById("flightResult");r.className="result-box result-loading";r.style.display="block";r.textContent="正在查询…";fetch("/flight?action=query").then(function(r2){if(!r2.ok)throw new Error("HTTP "+r2.status);return r2.json()}).then(function(d){if(d.ok){r.className="result-box result-info";r.innerHTML="✅ "+d.message}else{r.className="result-box result-error";r.innerHTML="❌ "+(d.error||d.message||"查询失败")}}).catch(function(e){r.className="result-box result-error";r.textContent="❌ 请求失败: "+e.message})}
-
-function toggleFlightMode(){if(!confirm("确定要切换飞行模式吗？\n飞行模式下无法收发短信。"))return;var btn=document.getElementById("flightBtn");var r=document.getElementById("flightResult");btn.disabled=true;r.className="result-box result-loading";r.style.display="block";r.textContent="正在切换…";fetch("/flight?action=toggle").then(function(r2){if(!r2.ok)throw new Error("HTTP "+r2.status);return r2.json()}).then(function(d){btn.disabled=false;if(d.ok){r.className="result-box result-success";r.innerHTML="✅ "+d.message}else{r.className="result-box result-error";r.innerHTML="❌ "+(d.error||d.message||"")}}).catch(function(e){btn.disabled=false;r.className="result-box result-error";r.textContent="❌ 请求失败: "+e.message})}
-
-function addLog(msg,type){var log=document.getElementById("atLog");var div=document.createElement("div");var prefix=document.createElement("b");if(type==="user"){prefix.style.color="#fff";prefix.textContent="> "}else if(type==="error"){prefix.style.color="#f44336";prefix.textContent="❌ "}else{prefix.style.color="#4CAF50";prefix.textContent="[RESP] "}div.appendChild(prefix);div.appendChild(document.createTextNode(msg));log.appendChild(div);log.scrollTop=log.scrollHeight}
-
+/* ===== AT Console ===== */
+function addLog(msg,type){
+  var log=document.getElementById("atLog");
+  var div=document.createElement("div");
+  var prefix=document.createElement("b");
+  if(type==="user"){prefix.style.color="#fff";prefix.textContent="> "}
+  else if(type==="error"){prefix.style.color="#f44336";prefix.textContent="x "}
+  else{prefix.style.color="#4CAF50";prefix.textContent="< "}
+  div.appendChild(prefix);div.appendChild(document.createTextNode(msg));
+  log.appendChild(div);log.scrollTop=log.scrollHeight;
+}
 function clearATLog(){document.getElementById("atLog").innerHTML=""}
+function sendAT(){
+  var input=document.getElementById("atCmd");var cmd=input.value.trim();if(!cmd)return;
+  var btn=document.getElementById("atBtn");btn.disabled=true;btn.textContent="…";
+  addLog(cmd,"user");input.value="";
+  fetch("/at?cmd="+encodeURIComponent(cmd)).then(function(r){return r.json()}).then(function(d){
+    btn.disabled=false;btn.textContent="发送";
+    var msg=d.ok?(d.message||""):(d.error||d.message||"");
+    var lines=msg.split("\n");var type=d.ok?"resp":"error";
+    for(var l=0;l<lines.length;l++)if(lines[l].trim())addLog(lines[l],type);
+    if(!d.ok&&!msg)addLog("执行失败","error");
+  }).catch(function(e){btn.disabled=false;btn.textContent="发送";addLog("请求失败: "+e.message,"error")});
+}
 
-function sendAT(){var input=document.getElementById("atCmd");var cmd=input.value.trim();if(!cmd)return;var btn=document.getElementById("atBtn");btn.disabled=true;btn.textContent="…";addLog(cmd,"user");input.value="";fetch("/at?cmd="+encodeURIComponent(cmd)).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){btn.disabled=false;btn.textContent="发送";var msg=d.ok?(d.message||""):(d.error||d.message||"");var lines=msg.split("\n");var type=d.ok?"resp":"error";for(var l=0;l<lines.length;l++)if(lines[l].trim())addLog(lines[l],type);if(!d.ok&&!msg)addLog("执行失败","error")}).catch(function(e){btn.disabled=false;btn.textContent="发送";addLog("请求失败: "+e.message,"error")})}
+/* ===== Schedule ===== */
+var SCHED_MODES=[{v:0,l:"单次"},{v:1,l:"每天"},{v:2,l:"每周"},{v:3,l:"每月"},{v:4,l:"间隔"}];
+var schedEditIdx=-1,schedData=[];
 
-function openLogs(){window.open("/api/logs","_blank")}
-function clearLogs(){var btn=document.getElementById("clearLogsBtn");var r=document.getElementById("logsResult");if(!confirm("确定要清除所有日志？"))return;btn.disabled=true;r.className="result-box result-loading";r.style.display="block";r.textContent="正在清除…";fetch("/api/logs",{method:"DELETE"}).then(function(r2){return r2.json()}).then(function(d){btn.disabled=false;if(d.ok){r.className="result-box result-success";r.textContent="✅ 日志已清除"}else{r.className="result-box result-error";r.textContent="❌ 清除失败"}}).catch(function(e){btn.disabled=false;r.className="result-box result-error";r.textContent="❌ 请求失败: "+e.message})}
+function schedToggleMode(){
+  var m=parseInt(document.getElementById("schedMode").value);
+  ["schedOnceFields","schedDailyFields","schedWeeklyFields","schedMonthlyFields","schedIntervalFields"].forEach(function(id,i){
+    document.getElementById(id).style.display=i===m?"block":"none";
+  });
+}
+function schedShowForm(idx){
+  schedEditIdx=(idx!==undefined)?idx:-1;
+  var task=null;if(idx!==undefined&&idx>=0&&idx<schedData.length)task=schedData[idx];
+  document.getElementById("schedModalTitle").textContent=task?"编辑定时短信任务":"新建定时短信任务";
+  document.getElementById("schedPhone").value=task?task.phone:"";
+  document.getElementById("schedMsg").value=task?task.message:"";
+  document.getElementById("schedMode").value=task?String(task.mode):"1";
+  if(task&&task.mode===0){var d=new Date(task.nextFire*1000);document.getElementById("schedOnceTime").value=d.toISOString().slice(0,16)}
+  else{document.getElementById("schedOnceTime").value=""}
+  document.getElementById("schedHour").value=task?task.hour:9;
+  document.getElementById("schedMinute").value=task?task.minute:0;
+  document.getElementById("schedWeekday").value=task?String(task.weekday):"1";
+  document.getElementById("schedWeeklyHour").value=task?task.hour:9;
+  document.getElementById("schedWeeklyMin").value=task?task.minute:0;
+  document.getElementById("schedMonthDay").value=task?task.monthDay:1;
+  document.getElementById("schedMonthlyHour").value=task?task.hour:9;
+  document.getElementById("schedMonthlyMin").value=task?task.minute:0;
+  document.getElementById("schedInterval").value=task?task.intervalMin:60;
+  schedToggleMode();
+  document.getElementById("schedModal").classList.add("show");
+}
+function schedCloseModal(){document.getElementById("schedModal").classList.remove("show")}
+function schedSave(){
+  var m=parseInt(document.getElementById("schedMode").value);
+  var phone=document.getElementById("schedPhone").value.trim();
+  var msg=document.getElementById("schedMsg").value.trim();
+  var el=document.getElementById("schedResult");
+  if(!phone){showRes(el,false,"号码不能为空");schedCloseModal();return}
+  if(!msg){showRes(el,false,"内容不能为空");schedCloseModal();return}
+  if(msg.length>160){showRes(el,false,"内容不能超过160字符");schedCloseModal();return}
+  var task={enabled:true,mode:m,phone:phone,message:msg,hour:0,minute:0,weekday:0,monthDay:1,intervalMin:60,nextFire:0};
+  if(m===0){var t=document.getElementById("schedOnceTime").value;if(!t){showRes(el,false,"请选择触发时间");schedCloseModal();return}task.nextFire=Math.floor(new Date(t).getTime()/1000)}
+  else if(m===1){task.hour=parseInt(document.getElementById("schedHour").value)||0;task.minute=parseInt(document.getElementById("schedMinute").value)||0}
+  else if(m===2){task.weekday=parseInt(document.getElementById("schedWeekday").value)||0;task.hour=parseInt(document.getElementById("schedWeeklyHour").value)||0;task.minute=parseInt(document.getElementById("schedWeeklyMin").value)||0}
+  else if(m===3){task.monthDay=parseInt(document.getElementById("schedMonthDay").value)||1;task.hour=parseInt(document.getElementById("schedMonthlyHour").value)||0;task.minute=parseInt(document.getElementById("schedMonthlyMin").value)||0}
+  else if(m===4){task.intervalMin=parseInt(document.getElementById("schedInterval").value)||60}
+  var body={action:schedEditIdx>=0?"update":"create",task:task};
+  if(schedEditIdx>=0)body.index=schedEditIdx;
+  fetch("/api/schedule",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(d){
+    if(d.ok){showRes(el,true,d.message||"操作成功");loadSchedule()}
+    else{showRes(el,false,d.error||"操作失败")}
+  }).catch(function(e){showRes(el,false,"请求失败: "+e.message)});
+  schedCloseModal();
+}
+function schedToggle(idx,enable){
+  fetch("/api/schedule",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:enable?"enable":"disable",index:idx})}).then(function(r){return r.json()}).then(function(d){if(d.ok)loadSchedule();else showRes(document.getElementById("schedResult"),false,d.error||"操作失败")}).catch(function(e){showRes(document.getElementById("schedResult"),false,"请求失败: "+e.message)});
+}
+function schedDelete(idx){
+  if(!confirm("确认删除此定时短信任务？"))return;
+  fetch("/api/schedule",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({action:"delete",index:idx})}).then(function(r){return r.json()}).then(function(d){if(d.ok)loadSchedule();else showRes(document.getElementById("schedResult"),false,d.error||"删除失败")}).catch(function(e){showRes(document.getElementById("schedResult"),false,"请求失败: "+e.message)});
+}
+function renderSchedule(){
+  var c=document.getElementById("schedList");
+  var badge=document.getElementById("schedBadge");
+  badge.textContent=schedData.length>0?("("+schedData.length+"/10)"):"";
+  if(schedData.length===0){c.innerHTML='<div class="sched-empty">暂无定时短信任务</div>';return}
+  var h='<table class="sched-table"><tr><th>启用</th><th>模式</th><th>号码</th><th>内容</th><th>操作</th></tr>';
+  for(var i=0;i<schedData.length;i++){
+    var t=schedData[i];var label=SCHED_MODES.find(function(m){return m.v===t.mode});
+    h+='<tr><td><input type="checkbox" '+(t.enabled?"checked":"")+' onchange="schedToggle('+i+',this.checked)"></td><td style="font-size:12px">'+(label?label.l:"?")+'</td><td style="font-size:12px">'+esc(t.phone)+'</td><td style="font-size:12px;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(t.message)+'</td><td style="white-space:nowrap"><button onclick="schedShowForm('+i+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px" title="编辑">编辑</button> <button onclick="schedDelete('+i+')" style="background:none;border:none;cursor:pointer;font-size:14px;padding:2px 4px;color:#d32f2f" title="删除">删除</button></td></tr>';
+  }
+  h+='</table>';c.innerHTML=h;
+}
+function loadSchedule(){
+  fetch("/api/schedule").then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json()}).then(function(d){
+    schedData=d.tasks||[];
+    var badge=document.getElementById("schedBadge");
+    badge.textContent=d.timeSynced?("("+schedData.length+"/"+d.maxCount+")"):("("+schedData.length+"/"+d.maxCount+") 时间未同步");
+    renderSchedule();
+  }).catch(function(e){document.getElementById("schedList").innerHTML='<div class="sched-empty" style="color:#c62828">加载失败: '+e.message+'</div>'});
+}
 
-function resetConfig(){var r=document.getElementById("resetResult");var btn=document.getElementById("resetBtn");if(!confirm("⚠️ 确认重置？\n此操作将清除所有配置并重启，不可撤销！"))return;r.className="result-box result-loading";r.style.display="block";r.textContent="正在获取凭证…";btn.disabled=true;fetch("/api/tools/reset-token").then(function(r2){return r2.json()}).then(function(d){r.textContent="正在重置…";return fetch("/api/tools/reset",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:d.token})})}).then(function(r2){return r2.json()}).then(function(d){if(d.ok){r.className="result-box result-success";var count=2;r.textContent="✅ "+d.message+"（"+count+"秒）";var timer=setInterval(function(){count--;if(count<=0){clearInterval(timer);r.textContent="🔄 设备正在重启…"}else{r.textContent="✅ "+d.message+"（"+count+"秒）"}},1000)}else{r.className="result-box result-error";r.textContent="❌ "+(d.error||"重置失败");btn.disabled=false}}).catch(function(e){r.className="result-box result-error";r.textContent="❌ 请求失败: "+e.message;btn.disabled=false})}
+/* ===== Blacklist ===== */
+var g_bl=[];
+function renderBl(){
+  var c=document.getElementById("blacklistItems");
+  if(!g_bl.length){c.innerHTML='<div class="hint">暂无黑名单号码</div>';return}
+  var h="";for(var i=0;i<g_bl.length;i++)h+='<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:#f8f8f8;border:1px solid #eee;border-radius:6px;margin-bottom:4px"><span style="flex:1;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace">'+esc(g_bl[i])+'</span><button onclick="rmBl('+i+')" style="background:none;border:none;cursor:pointer;font-size:14px;color:#ccc;padding:2px 4px">&times;</button></div>';
+  c.innerHTML=h;
+}
+function addBlackNum(){
+  var inp=document.getElementById("newBlNum"),n=inp.value.trim(),el=document.getElementById("blacklistResult");
+  if(!n)return;
+  if(g_bl.length>=20){showRes(el,false,"最多 20 个");return}
+  if(g_bl.indexOf(n)>=0){showRes(el,false,"号码已存在");return}
+  g_bl.push(n);inp.value="";renderBl();el.style.display="none";
+}
+function rmBl(i){g_bl.splice(i,1);renderBl()}
+function loadBlacklist(){
+  return fetch("/api/blacklist").then(function(r){return r.json()}).then(function(d){g_bl=d.numbers||[];renderBl()});
+}
+function saveBlacklist(){
+  var el=document.getElementById("blacklistResult");
+  fetch("/api/blacklist",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({numbers:g_bl})}).then(function(r){return r.json()}).then(function(d){
+    showRes(el,!!d.ok,d.ok?"已保存，共 "+d.count+" 条":(d.error||"保存失败"));
+  }).catch(function(e){showRes(el,false,"请求失败: "+e.message)});
+}
 
-function rebootDevice(){var r=document.getElementById("rebootResult");var btn=document.getElementById("rebootBtn");if(!confirm("确定要重启设备吗？\n期间无法收发短信。"))return;r.className="result-box result-loading";r.style.display="block";r.textContent="正在获取凭证…";btn.disabled=true;fetch("/api/tools/reset-token").then(function(r2){return r2.json()}).then(function(d){r.textContent="正在重启…";return fetch("/api/tools/reboot",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:d.token})})}).then(function(r2){return r2.json()}).then(function(d){if(d.ok){r.className="result-box result-success";var count=2;r.textContent="✅ "+d.message+"（"+count+"秒）";var timer=setInterval(function(){count--;if(count<=0){clearInterval(timer);r.textContent="🔄 设备正在重启…"}else{r.textContent="✅ "+d.message+"（"+count+"秒）"}},1000)}else{r.className="result-box result-error";r.textContent="❌ "+(d.error||"重启失败");btn.disabled=false}}).catch(function(e){r.className="result-box result-error";r.textContent="❌ 请求失败: "+e.message;btn.disabled=false})}
-
-var coredumpElfUrl="";
-function loadCoredumpInfo(){fetch("/api/tools/coredump/info").then(function(r){return r.json()}).then(function(d){if(!d.hasCoredump)return;var card=document.getElementById("coredumpInfoCard");var timeStr="时间未知";if(d.crashTime&&d.crashTime>0){timeStr=new Date(d.crashTime*1000).toLocaleString("zh-CN")}var sizeStr=d.size?(" / 文件大小: "+fmt(d.size)):"";var verStr=d.crashVersion?(" / 版本: "+d.crashVersion):"";var elfHtml="";if(d.elfUrl){coredumpElfUrl=d.elfUrl;elfHtml="<br><a href='"+d.elfUrl+"' target='_blank' style='color:#e65100;font-size:12px'>📥 下载调试符号文件</a>"}card.innerHTML="⚠️ <strong>检测到崩溃记录</strong><br>崩溃时间："+timeStr+verStr+sizeStr+elfHtml;card.style.display="block"}).catch(function(){})}
-
-function exportCoreDump(){var btn=document.getElementById("exportCoredumpBtn");var r=document.getElementById("coredumpResult");btn.disabled=true;r.className="result-box result-loading";r.style.display="block";r.textContent="正在导出…";fetch("/api/tools/coredump/export").then(function(resp){if(!resp.ok){return resp.text().then(function(txt){var msg=txt||("HTTP "+resp.status);try{var obj=JSON.parse(txt);msg=obj.error||obj.message||msg}catch(e){}throw new Error(msg)})}var cd=resp.headers.get("Content-Disposition")||"";var fileName="esp32-coredump.bin";var m=cd.match(/filename\*=UTF-8''([^;]+)|filename"?([^";]+)"?/i);if(m)fileName=decodeURIComponent(m[1]||m[2]);return resp.blob().then(function(blob){return{blob:blob,fileName:fileName}})}).then(function(d){var url=URL.createObjectURL(d.blob);var a=document.createElement("a");a.href=url;a.download=d.fileName;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);btn.disabled=false;r.className="result-box result-success";r.textContent="✅ coredump 导出成功"+(d.blob.size?("，大小 "+fmt(d.blob.size)):"");if(coredumpElfUrl){r.innerHTML+="<br><small style='opacity:.8'>正在触发 ELF 下载…</small>";var elfa=document.createElement("a");elfa.href=coredumpElfUrl;elfa.target="_blank";document.body.appendChild(elfa);elfa.click();document.body.removeChild(elfa)}}).catch(function(e){btn.disabled=false;r.className="result-box result-error";r.textContent="❌ 导出失败: "+e.message})}
-
-function exportConfig(){window.location.href="/api/config/export"}
-
-function importConfig(){var fileInput=document.getElementById("importFile");var r=document.getElementById("importResult");var btn=document.getElementById("importBtn");if(!fileInput.files||fileInput.files.length===0){r.className="result-box result-error";r.style.display="block";r.textContent="❌ 请先选择 JSON 文件";return}var file=fileInput.files[0];var reader=new FileReader();reader.onload=function(e){btn.disabled=true;r.className="result-box result-loading";r.style.display="block";r.textContent="正在导入…";fetch("/api/config/import",{method:"POST",headers:{"Content-Type":"application/json"},body:e.target.result}).then(function(resp){return resp.json()}).then(function(d){btn.disabled=false;if(d.ok){r.className="result-box result-success";r.textContent="✅ "+d.message}else{r.className="result-box result-error";r.textContent="❌ "+(d.error||"导入失败")}}).catch(function(e){btn.disabled=false;r.className="result-box result-error";r.textContent="❌ 请求失败: "+e.message})};reader.readAsText(file)}
-
-// ── OTA ──
-var otaPollingTimer=null;var otaInUpgrade=false;var otaCurrentVersion="";var otaLatestVersion="";
-function otaStateLabel(s){var m={idle:"空闲",checking:"正在检查…",downloading:"下载中…",writing:"写入中…",flashing_fs:"写入Web UI…",success:"升级成功，重启中…",failed:"升级失败"};return m[s]||s}
-function renderOtaStatus(d){var progress=document.getElementById("otaProgress");var curVerEl=document.getElementById("otaCurVer");var latestEl=document.getElementById("otaLatestVer");var onlineBtn=document.getElementById("otaOnlineBtn");var upToDate=document.getElementById("otaUpToDate");if(d.currentVersion){curVerEl.textContent=d.currentVersion;otaCurrentVersion=d.currentVersion}if(d.latestVersion){latestEl.textContent=d.latestVersion;otaLatestVersion=d.latestVersion}else if(d.state==="checking")latestEl.textContent="检查中…";var stateLabel=otaStateLabel(d.state);if(d.state!=="idle"){progress.style.display="block";if(d.state==="failed"){progress.className="result-box result-error";progress.textContent="❌ "+(d.message||"升级失败")}else if(d.state==="success"){progress.className="result-box result-success";progress.textContent="✅ "+(d.message||"升级成功，重启中")}else{progress.className="result-box result-loading";progress.textContent=stateLabel+(d.progress>0?"（"+d.progress+"%）":"")}}else{if(!otaInUpgrade)progress.style.display="none"}if(d.latestVersion&&d.currentVersion){if(d.latestVersion!==d.currentVersion){latestEl.textContent=d.latestVersion+" 🆕";onlineBtn.disabled=false;upToDate.style.display="none"}else{onlineBtn.disabled=true;upToDate.style.display="block"}}}
-function pollOtaStatus(){fetch("/api/ota/status").then(function(r){return r.json()}).then(function(d){if(d.state==="success"||d.state==="failed"||d.state==="idle"){stopOtaPolling();otaInUpgrade=false}renderOtaStatus(d)}).catch(function(){if(otaInUpgrade){var p=document.getElementById("otaProgress");if(p){p.className="result-box result-loading";p.style.display="block";p.textContent="设备升级重启中，请稍候…"}}})}
+/* ===== OTA ===== */
+var otaPollingTimer=null,otaInUpgrade=false,otaCurrentVersion="",otaLatestVersion="";
+function otaStateLabel(s){return{idle:"空闲",checking:"正在检查…",downloading:"下载中…",writing:"写入中…",flashing_fs:"写入Web UI…",success:"升级成功，重启中…",failed:"升级失败"}[s]||s}
+function renderOtaStatus(d){
+  var progress=document.getElementById("otaProgress");
+  var curVerEl=document.getElementById("otaCurVer");
+  var latestEl=document.getElementById("otaLatestVer");
+  var onlineBtn=document.getElementById("otaOnlineBtn");
+  var upToDate=document.getElementById("otaUpToDate");
+  if(d.currentVersion){curVerEl.textContent=d.currentVersion;otaCurrentVersion=d.currentVersion}
+  if(d.latestVersion){latestEl.textContent=d.latestVersion;otaLatestVersion=d.latestVersion}
+  else if(d.state==="checking")latestEl.textContent="检查中…";
+  if(d.state!=="idle"){
+    progress.style.display="block";
+    if(d.state==="failed"){progress.className="res err";progress.textContent="错误: "+(d.message||"升级失败")}
+    else if(d.state==="success"){progress.className="res ok";progress.textContent=d.message||"升级成功，重启中"}
+    else{progress.className="res load";progress.textContent=otaStateLabel(d.state)+(d.progress>0?" ("+d.progress+"%)":"")}
+  }else if(!otaInUpgrade){progress.style.display="none"}
+  if(d.latestVersion&&d.currentVersion){
+    if(d.latestVersion!==d.currentVersion){latestEl.textContent=d.latestVersion+" (有更新)";onlineBtn.disabled=false;upToDate.style.display="none"}
+    else{onlineBtn.disabled=true;upToDate.style.display="block"}
+  }
+}
+function pollOtaStatus(){
+  fetch("/api/ota/status").then(function(r){return r.json()}).then(function(d){
+    if(d.state==="success"||d.state==="failed"||d.state==="idle"){stopOtaPolling();otaInUpgrade=false}
+    renderOtaStatus(d);
+  }).catch(function(){if(otaInUpgrade){var p=document.getElementById("otaProgress");p.className="res load";p.style.display="block";p.textContent="设备升级重启中，请稍候…"}});
+}
 function startOtaPolling(){if(otaPollingTimer)return;otaPollingTimer=setInterval(pollOtaStatus,1000)}
 function stopOtaPolling(){if(otaPollingTimer){clearInterval(otaPollingTimer);otaPollingTimer=null}}
-function startOtaVersionCheck(){fetch("/api/ota/version").then(function(r){return r.json()}).then(function(d){renderOtaStatus(d);if(!d.latestVersion)startOtaPolling()}).catch(function(e){document.getElementById("otaCurVer").textContent="获取失败";document.getElementById("otaLatestVer").textContent="检查失败"});fetch("/api/ota/status").then(function(r){return r.json()}).then(function(d){var active=["checking","downloading","writing","flashing_fs"];if(active.indexOf(d.state)!==-1){otaInUpgrade=true;renderOtaStatus(d);startOtaPolling()}}).catch(function(){})}
-function startOnlineUpgrade(){if(!otaLatestVersion||otaLatestVersion===otaCurrentVersion){var p=document.getElementById("otaProgress");p.className="result-box result-error";p.style.display="block";p.textContent="❌ "+(!otaLatestVersion?"尚未获取最新版本":"当前已是最新版本");return}if(!confirm("确定要开始在线升级吗？\n目标版本: "+otaLatestVersion+"\n升级期间请勿断电。"))return;var btn=document.getElementById("otaOnlineBtn");btn.disabled=true;otaInUpgrade=true;fetch("/api/ota/start",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({tag:otaLatestVersion})}).then(function(r){return r.json()}).then(function(d){if(d.ok){startOtaPolling()}else{btn.disabled=false;otaInUpgrade=false;var p=document.getElementById("otaProgress");p.className="result-box result-error";p.style.display="block";p.textContent="❌ "+(d.error||d.message||"启动升级失败")}}).catch(function(e){btn.disabled=false;otaInUpgrade=false;var p=document.getElementById("otaProgress");p.className="result-box result-error";p.style.display="block";p.textContent="❌ 请求失败: "+e.message})}
+function startOtaVersionCheck(){
+  fetch("/api/ota/version").then(function(r){return r.json()}).then(function(d){renderOtaStatus(d);if(!d.latestVersion)startOtaPolling()}).catch(function(){document.getElementById("otaCurVer").textContent="获取失败";document.getElementById("otaLatestVer").textContent="检查失败"});
+  fetch("/api/ota/status").then(function(r){return r.json()}).then(function(d){if(["checking","downloading","writing","flashing_fs"].indexOf(d.state)!==-1){otaInUpgrade=true;renderOtaStatus(d);startOtaPolling()}}).catch(function(){});
+}
+function startOnlineUpgrade(){
+  if(!otaLatestVersion||otaLatestVersion===otaCurrentVersion){var p=document.getElementById("otaProgress");p.className="res err";p.style.display="block";p.textContent="错误: "+(!otaLatestVersion?"尚未获取最新版本":"当前已是最新版本");return}
+  if(!confirm("确定要开始在线升级吗？\n目标版本: "+otaLatestVersion+"\n升级期间请勿断电。"))return;
+  var btn=document.getElementById("otaOnlineBtn");btn.disabled=true;otaInUpgrade=true;
+  fetch("/api/ota/start",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({tag:otaLatestVersion})}).then(function(r){return r.json()}).then(function(d){
+    if(d.ok){startOtaPolling()}else{btn.disabled=false;otaInUpgrade=false;var p=document.getElementById("otaProgress");p.className="res err";p.style.display="block";p.textContent="错误: "+(d.error||d.message||"启动升级失败")}
+  }).catch(function(e){btn.disabled=false;otaInUpgrade=false;var p=document.getElementById("otaProgress");p.className="res err";p.style.display="block";p.textContent="错误: "+e.message});
+}
+function startManualUpgrade(){
+  var fileInput=document.getElementById("otaFile");var btn=document.getElementById("otaUploadBtn");var progress=document.getElementById("otaProgress");
+  if(!fileInput.files||fileInput.files.length===0){progress.className="res err";progress.style.display="block";progress.textContent="错误: 请先选择固件文件";return}
+  var file=fileInput.files[0];
+  if(file.size>1.5*1024*1024){progress.className="res err";progress.style.display="block";progress.textContent="错误: 文件过大（最大约1.25MB）";return}
+  if(!confirm("确定要上传固件吗？\n文件："+file.name+"\n大小："+(file.size/1024).toFixed(1)+" KB\n\n升级成功后设备将自动重启。"))return;
+  btn.disabled=true;otaInUpgrade=true;
+  progress.className="res load";progress.style.display="block";progress.textContent="正在上传固件…";
+  var fd=new FormData();fd.append("firmware",file);
+  fetch("/api/ota/upload",{method:"POST",body:fd}).then(function(r){return r.json()}).then(function(d){
+    btn.disabled=false;otaInUpgrade=false;
+    if(d.ok){progress.className="res ok";progress.textContent=d.message||"上传成功，重启中"}
+    else{progress.className="res err";progress.textContent="错误: "+(d.error||d.message||"上传失败")}
+  }).catch(function(e){btn.disabled=false;otaInUpgrade=false;progress.className="res err";progress.textContent="错误: "+e.message});
+  startOtaPolling();
+}
+function startManualLfsUpgrade(){
+  var fileInput=document.getElementById("otaFsFile");var btn=document.getElementById("otaUploadFsBtn");var progress=document.getElementById("otaProgress");
+  if(!fileInput.files||fileInput.files.length===0){progress.className="res err";progress.style.display="block";progress.textContent="错误: 请先选择 LittleFS 文件";return}
+  var file=fileInput.files[0];
+  if(!confirm("确定要更新 Web UI 吗？\n文件："+file.name+"\n大小："+(file.size/1024).toFixed(1)+" KB"))return;
+  btn.disabled=true;otaInUpgrade=true;
+  progress.className="res load";progress.style.display="block";progress.textContent="正在上传 Web UI…";
+  var fd=new FormData();fd.append("filesystem",file);
+  fetch("/api/ota/upload-fs",{method:"POST",body:fd}).then(function(r){return r.json()}).then(function(d){
+    btn.disabled=false;otaInUpgrade=false;
+    if(d.ok){progress.className="res ok";progress.textContent=d.message||"上传成功，重启中"}
+    else{progress.className="res err";progress.textContent="错误: "+(d.error||d.message||"上传失败")}
+  }).catch(function(e){btn.disabled=false;otaInUpgrade=false;progress.className="res err";progress.textContent="错误: "+e.message});
+  startOtaPolling();
+}
 
-function startManualUpgrade(){var fileInput=document.getElementById("otaFile");var btn=document.getElementById("otaUploadBtn");var progress=document.getElementById("otaProgress");if(!fileInput.files||fileInput.files.length===0){progress.className="result-box result-error";progress.style.display="block";progress.textContent="❌ 请先选择固件文件";return}var file=fileInput.files[0];if(file.size>1.5*1024*1024){progress.className="result-box result-error";progress.style.display="block";progress.textContent="❌ 文件过大（最大约1.25MB）";return}if(!confirm("确定要上传固件吗？\n文件："+file.name+"\n大小："+(file.size/1024).toFixed(1)+" KB\n\n升级成功后设备将自动重启。"))return;btn.disabled=true;otaInUpgrade=true;progress.className="result-box result-loading";progress.style.display="block";progress.textContent="正在上传固件…";var form=new FormData();form.append("firmware",file);fetch("/api/ota/upload",{method:"POST",body:form}).then(function(r){return r.json()}).then(function(d){btn.disabled=false;otaInUpgrade=false;if(d.ok){progress.className="result-box result-success";progress.textContent="✅ "+(d.message||"上传成功，重启中")}else{progress.className="result-box result-error";progress.textContent="❌ "+(d.error||d.message||"上传失败")}}).catch(function(e){btn.disabled=false;otaInUpgrade=false;progress.className="result-box result-error";progress.textContent="❌ 上传失败: "+e.message});startOtaPolling()}
+/* ===== Logs ===== */
+function openLogs(){window.open("/api/logs","_blank")}
+function clearLogs(){
+  var btn=document.getElementById("clearLogsBtn");var el=document.getElementById("logsResult");
+  if(!confirm("确定要清除所有日志？"))return;
+  btn.disabled=true;
+  el.className="res load";el.textContent="正在清除…";el.style.display="block";
+  fetch("/api/logs",{method:"DELETE"}).then(function(r){return r.json()}).then(function(d){
+    btn.disabled=false;
+    showRes(el,!!d.ok,d.ok?"日志已清除":(d.error||"清除失败"));
+  }).catch(function(e){btn.disabled=false;el.className="res err";el.textContent="错误: "+e.message});
+}
 
-function startManualLfsUpgrade(){var fileInput=document.getElementById("otaFsFile");var btn=document.getElementById("otaUploadFsBtn");var progress=document.getElementById("otaProgress");if(!fileInput.files||fileInput.files.length===0){progress.className="result-box result-error";progress.style.display="block";progress.textContent="❌ 请先选择 LittleFS 文件";return}var file=fileInput.files[0];if(!confirm("确定要更新 Web UI 吗？\n文件："+file.name+"\n大小："+(file.size/1024).toFixed(1)+" KB"))return;btn.disabled=true;document.getElementById("otaUploadBtn").disabled=true;otaInUpgrade=true;progress.className="result-box result-loading";progress.style.display="block";progress.textContent="正在上传 Web UI…";var form=new FormData();form.append("filesystem",file);fetch("/api/ota/upload-fs",{method:"POST",body:form}).then(function(r){return r.json()}).then(function(d){btn.disabled=false;document.getElementById("otaUploadBtn").disabled=false;otaInUpgrade=false;if(d.ok){progress.className="result-box result-success";progress.textContent="✅ "+(d.message||"上传成功，重启中")}else{progress.className="result-box result-error";progress.textContent="❌ "+(d.error||d.message||"上传失败")}}).catch(function(e){btn.disabled=false;document.getElementById("otaUploadBtn").disabled=false;otaInUpgrade=false;progress.className="result-box result-error";progress.textContent="❌ 上传失败: "+e.message});startOtaPolling()}
+/* ===== Coredump ===== */
+var coredumpElfUrl="";
+function loadCoredumpInfo(){
+  fetch("/api/tools/coredump/info").then(function(r){return r.json()}).then(function(d){
+    if(!d.hasCoredump)return;
+    var card=document.getElementById("coredumpInfo");
+    var timeStr="时间未知";
+    if(d.crashTime&&d.crashTime>0)timeStr=new Date(d.crashTime*1000).toLocaleString("zh-CN");
+    var extra="";
+    if(d.crashVersion)extra+=" / 版本: "+d.crashVersion;
+    if(d.size)extra+=" / 大小: "+fmt(d.size);
+    var elfHtml="";
+    if(d.elfUrl){coredumpElfUrl=d.elfUrl;elfHtml="<br><a href='"+d.elfUrl+"' target='_blank' style='color:#e65100;font-size:12px'>下载调试符号文件</a>"}
+    card.innerHTML="检测到崩溃记录<br>崩溃时间："+timeStr+extra+elfHtml;
+    card.style.display="block";
+  }).catch(function(){});
+}
+function exportCoreDump(){
+  var btn=document.getElementById("exportCoredumpBtn");var el=document.getElementById("coredumpResult");
+  btn.disabled=true;
+  el.className="res load";el.textContent="正在导出…";el.style.display="block";
+  fetch("/api/tools/coredump/export").then(function(resp){
+    if(!resp.ok)return resp.text().then(function(txt){var msg=txt||("HTTP "+resp.status);try{var obj=JSON.parse(txt);msg=obj.error||obj.message||msg}catch(e){}throw new Error(msg)});
+    var cd=resp.headers.get("Content-Disposition")||"";var fileName="esp32-coredump.bin";
+    var m=cd.match(/filename\*=UTF-8''([^;]+)|filename"?([^";]+)"?/i);if(m)fileName=decodeURIComponent(m[1]||m[2]);
+    return resp.blob().then(function(blob){return{blob:blob,fileName:fileName}});
+  }).then(function(d){
+    var url=URL.createObjectURL(d.blob);var a=document.createElement("a");a.href=url;a.download=d.fileName;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    btn.disabled=false;
+    el.className="res ok";el.textContent="coredump 导出成功"+(d.blob.size?"，大小 "+fmt(d.blob.size):"");
+    if(coredumpElfUrl){var elfa=document.createElement("a");elfa.href=coredumpElfUrl;elfa.target="_blank";document.body.appendChild(elfa);elfa.click();document.body.removeChild(elfa)}
+  }).catch(function(e){btn.disabled=false;el.className="res err";el.textContent="错误: "+e.message});
+}
 
-document.addEventListener("DOMContentLoaded",function(){loadStatus();loadSoc();loadCoredumpInfo();loadSchedule();startOtaVersionCheck()});
+/* ===== Config export/import/reset ===== */
+function exportConfig(){window.location.href="/api/config/export"}
+function importConfig(){
+  var fileInput=document.getElementById("importFile");var el=document.getElementById("importResult");var btn=document.getElementById("importBtn");
+  if(!fileInput.files||fileInput.files.length===0){el.className="res err";el.textContent="错误: 请先选择 JSON 文件";el.style.display="block";return}
+  var file=fileInput.files[0];var reader=new FileReader();
+  reader.onload=function(e){
+    btn.disabled=true;
+    el.className="res load";el.textContent="正在导入…";el.style.display="block";
+    fetch("/api/config/import",{method:"POST",headers:{"Content-Type":"application/json"},body:e.target.result}).then(function(r){return r.json()}).then(function(d){
+      btn.disabled=false;
+      showRes(el,!!d.ok,d.ok?(d.message||"导入成功"):(d.error||"导入失败"));
+    }).catch(function(e){btn.disabled=false;el.className="res err";el.textContent="错误: "+e.message});
+  };
+  reader.readAsText(file);
+}
+function resetConfig(){
+  var el=document.getElementById("resetResult");var btn=document.getElementById("resetBtn");
+  if(!confirm("确认重置？\n此操作将清除所有配置并重启，不可撤销！"))return;
+  el.className="res load";el.textContent="正在获取凭证…";el.style.display="block";btn.disabled=true;
+  fetch("/api/tools/reset-token").then(function(r){return r.json()}).then(function(d){
+    el.textContent="正在重置…";
+    return fetch("/api/tools/reset",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:d.token})});
+  }).then(function(r){return r.json()}).then(function(d){
+    if(d.ok){el.className="res ok";el.textContent=d.message+"，设备将在几秒后重启"}
+    else{el.className="res err";el.textContent="错误: "+(d.error||"重置失败");btn.disabled=false}
+  }).catch(function(e){el.className="res err";el.textContent="错误: "+e.message;btn.disabled=false});
+}
+
+/* ===== Load all ===== */
+function loadAll(){
+  loadStatus().then(loadSoc).then(loadBlacklist).then(loadSchedule).then(function(){
+    loadCoredumpInfo();
+    startOtaVersionCheck();
+  });
+}
+document.addEventListener("DOMContentLoaded",loadAll);
 </script>
 </body>
 </html>

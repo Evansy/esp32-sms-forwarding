@@ -23,6 +23,45 @@ void configController(AsyncWebServerRequest* request) {
   root["pushStrategy"] = (int)config.pushStrategy;
   root["pushCount"]    = config.pushCount;
 
+  // 可用推送通道类型列表（由 build flags 控制）
+  JsonArray types = root["availablePushTypes"].to<JsonArray>();
+#if FEATURE_PUSH_POST_JSON
+  types.add(1);
+#endif
+#if FEATURE_PUSH_BARK
+  types.add(2);
+#endif
+#if FEATURE_PUSH_GET
+  types.add(3);
+#endif
+#if FEATURE_PUSH_DINGTALK
+  types.add(4);
+#endif
+#if FEATURE_PUSH_PUSHPLUS
+  types.add(5);
+#endif
+#if FEATURE_PUSH_SERVERCHAN
+  types.add(6);
+#endif
+#if FEATURE_PUSH_CUSTOM
+  types.add(7);
+#endif
+#if FEATURE_PUSH_FEISHU
+  types.add(8);
+#endif
+#if FEATURE_PUSH_GOTIFY
+  types.add(9);
+#endif
+#if FEATURE_PUSH_TELEGRAM
+  types.add(10);
+#endif
+#if FEATURE_PUSH_WECHAT_WORK
+  types.add(11);
+#endif
+#if FEATURE_PUSH_SMS
+  types.add(12);
+#endif
+
   root["rbEnabled"]   = rebootSchedule.enabled;
   root["rbMode"]      = (int)rebootSchedule.mode;
   root["rbHour"]      = (int)rebootSchedule.hour;

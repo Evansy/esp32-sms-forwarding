@@ -48,18 +48,42 @@ static bool _sendOneChannel(const PushChannel& ch, const MessageContext& ctx, co
 
   bool ok = false;
   switch (rendered.type) {
+#if FEATURE_PUSH_POST_JSON
     case PUSH_TYPE_POST_JSON:   ok = PushChannels::sendPostJson(rendered, sender, body, timestamp);    break;
+#endif
+#if FEATURE_PUSH_BARK
     case PUSH_TYPE_BARK:        ok = PushChannels::sendBark(rendered, sender, body, timestamp);         break;
+#endif
+#if FEATURE_PUSH_GET
     case PUSH_TYPE_GET:         ok = PushChannels::sendGet(rendered, sender, body, timestamp);          break;
+#endif
+#if FEATURE_PUSH_DINGTALK
     case PUSH_TYPE_DINGTALK:    ok = PushChannels::sendDingtalk(rendered, sender, body, timestamp);     break;
+#endif
+#if FEATURE_PUSH_PUSHPLUS
     case PUSH_TYPE_PUSHPLUS:    ok = PushChannels::sendPushPlus(rendered, sender, body, timestamp);     break;
+#endif
+#if FEATURE_PUSH_SERVERCHAN
     case PUSH_TYPE_SERVERCHAN:  ok = PushChannels::sendServerChan(rendered, sender, body, timestamp);   break;
+#endif
+#if FEATURE_PUSH_CUSTOM
     case PUSH_TYPE_CUSTOM:      ok = PushChannels::sendCustom(rendered, sender, body, timestamp);       break;
+#endif
+#if FEATURE_PUSH_FEISHU
     case PUSH_TYPE_FEISHU:      ok = PushChannels::sendFeishu(rendered, sender, body, timestamp);       break;
+#endif
+#if FEATURE_PUSH_GOTIFY
     case PUSH_TYPE_GOTIFY:      ok = PushChannels::sendGotify(rendered, sender, body, timestamp);       break;
+#endif
+#if FEATURE_PUSH_TELEGRAM
     case PUSH_TYPE_TELEGRAM:    ok = PushChannels::sendTelegram(rendered, sender, body, timestamp);     break;
+#endif
+#if FEATURE_PUSH_WECHAT_WORK
     case PUSH_TYPE_WECHAT_WORK: ok = PushChannels::sendWechatWork(rendered, sender, body, timestamp);   break;
+#endif
+#if FEATURE_PUSH_SMS
     case PUSH_TYPE_SMS:         ok = PushChannels::sendSmsPush(rendered, sender, body, timestamp);      break;
+#endif
     default:
       LOG("PUSH", "未知推送类型: %d", (int)rendered.type);
       break;
@@ -70,18 +94,42 @@ static bool _sendOneChannel(const PushChannel& ch, const MessageContext& ctx, co
 // 构建消息上下文（内部辅助）
 static const char* pushTypeLabel(PushType t) {
   switch (t) {
+#if FEATURE_PUSH_POST_JSON
     case PUSH_TYPE_POST_JSON:   return "POST JSON格式";
+#endif
+#if FEATURE_PUSH_BARK
     case PUSH_TYPE_BARK:        return "Bark 服务";
+#endif
+#if FEATURE_PUSH_GET
     case PUSH_TYPE_GET:         return "GET请求";
+#endif
+#if FEATURE_PUSH_DINGTALK
     case PUSH_TYPE_DINGTALK:    return "钉钉机器人";
+#endif
+#if FEATURE_PUSH_PUSHPLUS
     case PUSH_TYPE_PUSHPLUS:    return "PushPlus";
+#endif
+#if FEATURE_PUSH_SERVERCHAN
     case PUSH_TYPE_SERVERCHAN:  return "Server酱";
+#endif
+#if FEATURE_PUSH_CUSTOM
     case PUSH_TYPE_CUSTOM:      return "POST 文本";
+#endif
+#if FEATURE_PUSH_FEISHU
     case PUSH_TYPE_FEISHU:      return "飞书机器人";
+#endif
+#if FEATURE_PUSH_GOTIFY
     case PUSH_TYPE_GOTIFY:      return "Gotify";
+#endif
+#if FEATURE_PUSH_TELEGRAM
     case PUSH_TYPE_TELEGRAM:    return "Telegram Bot";
+#endif
+#if FEATURE_PUSH_WECHAT_WORK
     case PUSH_TYPE_WECHAT_WORK: return "企业微信机器人";
+#endif
+#if FEATURE_PUSH_SMS
     case PUSH_TYPE_SMS:         return "SMS 短信";
+#endif
     default:                    return "未知";
   }
 }

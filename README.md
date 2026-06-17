@@ -20,14 +20,23 @@
 - 长短信自动合并（30 秒超时）
 - 支持来电通知功能
 - 支持号码黑名单（短信和来电均拦截）
+- 定时短信（单次 / 每天 / 每周 / 每月 / 间隔模式，最多 10 个任务）
 - 定时重启（每日定时或按间隔），防止长期运行异常
-- 配置导入导出（语义化嵌套 JSON 文件，浏览器直接下载）
+- OTA 在线固件升级（自动检查新版本，一键升级）+ 手动上传固件/Web UI
+- 设备状态仪表盘（IP、内存、运行时长、Flash 用量一目了然）
+- 模组诊断查询（固件信息、信号质量、SIM 卡、网络注册、WiFi 状态）
+- 飞行模式控制（查询 / 切换，远程关闭射频省电）
+- AT 指令调试控制台（通过 Web 界面直接发送 AT 指令）
+- 日志管理（查看实时日志、清除日志文件）
+- 崩溃记录分析（coredump 导出 + 调试符号下载）
+- 配置导入导出（JSON 文件，浏览器直接下载）
 - 配置一键重置为出厂默认值（CSRF token 保护）
 - SIM 卡热插拔检测（运行中插入自动初始化）
 - 设备状态监控（信号强度、网络状态、SIM 状态、Flash 用量）
 - 通过 Web 界面主动发送短信（消耗余额保号）
 - 通过 Web 界面发起 Ping 测试（极低流量消耗余额）
 - 管理员短信远程控制（发送短信、重启设备）
+- 开机自动推送通知（含设备地址、固件版本、崩溃记录）
 - 自定义固件应用描述信息（ESPConnect 可显示真实版本）
 
 ## 推送通道支持
@@ -167,15 +176,20 @@ esptool --chip esp32c3 --baud 460800 write_flash 0x290000 littlefs.bin
 **ESP32-C3（C++17，PlatformIO）**：
 
 - `src/config/` — 配置结构体，NVS（非易失存储）读写，字段校验
-- `src/push/` — 推送通道分发，12 种推送类型实现，消息模板渲染
-- `src/email/` — SMTP 邮件发送（ReadyMail）
-- `src/sms/` — UART 读取，PDU 格式解析（pdulib），长短信重组
+- `src/push/` — 推送通道分发，12 种推送类型实现，消息模板渲染，队列与重试
+- `src/sms/` — UART 读取，PDU 格式解析（pdulib），长短信重组，短信发送
+- `src/sim/` — SIM 卡 AT 指令，状态机，热插拔，运营商/号码查询，SIMDispatcher 串行分发
 - `src/http/` — HTTP 路由（ESPAsyncWebServer），Basic Auth，API 控制器
-- `src/sim/` — SIM 卡 AT 指令，状态机，热插拔，运营商/号码查询
 - `src/wifi/` — 多 WiFi 有序连接，AP 模式管理
 - `src/time/` — 时间同步（SIM NITZ + NTP）
-- `data/index.html` — 配置管理页面（LittleFS）
-- `data/tools.html` — 工具箱页面（LittleFS）
+- `src/schedule/` — 定时短信调度器（持久化到 NVS）
+- `src/ota/` — OTA 在线升级 + 手动固件上传
+- `src/logger/` — 日志系统（串口 + 内存环形缓冲 + 可选文件写入）
+- `src/coredump/` — ESP32 崩溃 core dump 捕获与导出
+- `src/call/` — 来电检测与通知
+- `src/ble/` — BluFi BLE 配网（可选功能）
+- `data/index.html` — 配置管理页面（常规 / 推送 / 网络 / 高级）
+- `data/tools.html` — 工具箱页面（状态 / 通信 / 诊断 / 调试 / 维护）
 
 **ML307R/C/A**：运行出厂 AT 固件，无需改动。
 
@@ -184,9 +198,25 @@ esptool --chip esp32c3 --baud 460800 write_flash 0x290000 littlefs.bin
 | 库 | 用途 |
 |----|------|
 | `pdulib@^0.5.11` | PDU 格式短信解析 |
-| `ReadyMail@^0.3.8` | SMTP 邮件发送 |
 | `ESPAsyncWebServer` | 异步 HTTP Web 服务 |
 | `ArduinoJson@^7.4.0` | JSON 序列化/反序列化 |
+
+## Web UI
+
+两个单页面，纯原生 JS（无框架依赖），gzip 压缩后烧录到 LittleFS 分区。
+
+**配置页**（`/`）— 4 个 tab：
+- 常规：管理账号、设备信息、SIM 事件通知、数据流量开关
+- 推送：推送策略（广播/故障转移）、推送通道配置
+- 网络：WiFi 列表管理
+- 高级：黑名单、定时重启
+
+**工具页**（`/tools`）— 5 个 tab：
+- 状态：设备仪表盘（IP、内存、运行时长、Flash）、快捷操作（Ping、重启）
+- 通信：发送短信、定时短信任务管理、黑名单
+- 诊断：模组信息查询（固件/信号/SIM/网络/WiFi）、Ping 测试、飞行模式
+- 调试：AT 指令控制台
+- 维护：OTA 升级、日志管理、崩溃记录导出、配置导入导出、重置
 
 
 ## 本地构建
@@ -204,22 +234,24 @@ git clone https://github.com/maxming2333/esp32-sms-forwarding.git
 cd esp32-sms-forwarding
 ```
 
+> 推荐使用项目根目录下的 `.venv` 虚拟环境，后续命令需先 `source .venv/bin/activate`。
+
 **编译固件**：
 
 ```bash
 pio run
 ```
 
-**烧录固件**：
+**烧录固件**（自动上传 LittleFS）：
 
 ```bash
 pio run -t upload
 ```
 
-**构建并上传 LittleFS（Web UI 文件系统）**：
+> 烧录时会自动触发 `script/upload_littlefs.py`，将 `data/` 下的 HTML 文件 gzip 压缩后上传到 LittleFS 分区，完成后恢复原始文件。
+
+**单独上传 Web UI 文件系统**：
 
 ```bash
 pio run -t uploadfs
 ```
-
-> `uploadfs` 会先通过 Python 脚本 gzip 压缩 `data/` 目录下的 HTML 文件，再上传至 ESP32-C3 的 LittleFS 分区（地址 `0x290000`）。

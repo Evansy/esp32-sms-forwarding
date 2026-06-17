@@ -102,8 +102,10 @@ void HttpServer::setup(AsyncWebServer& server) {
     [](AsyncWebServerRequest* request) {},
     nullptr,
     rebootController);
+  #if FEATURE_COREDUMP
   server.on("/api/tools/coredump/info",   HTTP_GET, coredumpInfoController);
   server.on("/api/tools/coredump/export", HTTP_GET, exportCoreDumpController);
+#endif
 
   // OTA upgrade API
   server.on("/api/ota/status",  HTTP_GET,  otaStatusController);
@@ -126,16 +128,23 @@ void HttpServer::setup(AsyncWebServer& server) {
     request->send(204);
   });
 
-  // Static pages — served from LittleFS as gzip, browser decompresses automatically
-  server.on("/tools", HTTP_GET, [](AsyncWebServerRequest* request) {
-    AsyncWebServerResponse* resp = request->beginResponse(LittleFS, "/tools.html.gz", "text/html");
-    resp->addHeader("Content-Encoding", "gzip");
-    request->send(resp);
+  // Static pages — prefer .gz (compressed), fall back to uncompressed
+  // This allows both `pio run -t upload` (auto-gzip) and `pio run -t uploadfs` (raw) to work
+  auto serveHtml = [](AsyncWebServerRequest* request, const char* path) {
+    String gzPath = String(path) + ".gz";
+    if (LittleFS.exists(gzPath)) {
+      AsyncWebServerResponse* resp = request->beginResponse(LittleFS, gzPath, "text/html");
+      resp->addHeader("Content-Encoding", "gzip");
+      request->send(resp);
+    } else {
+      request->send(LittleFS, path, "text/html");
+    }
+  };
+  server.on("/tools", HTTP_GET, [serveHtml](AsyncWebServerRequest* request) {
+    serveHtml(request, "/tools.html");
   });
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
-    AsyncWebServerResponse* resp = request->beginResponse(LittleFS, "/index.html.gz", "text/html");
-    resp->addHeader("Content-Encoding", "gzip");
-    request->send(resp);
+  server.on("/", HTTP_GET, [serveHtml](AsyncWebServerRequest* request) {
+    serveHtml(request, "/index.html");
   });
 
   // All unmatched routes → 404 (no LittleFS lookup, no VFS error logs)

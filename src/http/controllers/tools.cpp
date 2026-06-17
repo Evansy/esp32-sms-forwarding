@@ -3,7 +3,9 @@
 #include "http/body_accumulator.h"
 #include "http/json_response.h"
 #include "../../logger/logger.h"
+#if FEATURE_COREDUMP
 #include "coredump/coredump.h"
+#endif
 #include "sms/sms.h"
 #include "sim/sim_dispatcher.h"
 #include "wifi/wifi_manager.h"
@@ -395,6 +397,7 @@ void rebootController(AsyncWebServerRequest* request, uint8_t* data,
   JsonResp::okWithReboot(request, "设备将在2秒后重启");
 }
 
+#if FEATURE_COREDUMP
 void exportCoreDumpController(AsyncWebServerRequest* request) {
   const esp_partition_t* part = Coredump::partition();
 
@@ -465,3 +468,4 @@ void coredumpInfoController(AsyncWebServerRequest* request) {
   resp->setLength();
   request->send(resp);
 }
+#endif
