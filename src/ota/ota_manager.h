@@ -22,7 +22,7 @@ struct OtaStatusPayload {
 };
 
 // GitHub Release 基础 URL（拼接 tag 得到具体下载地址）
-static const char* const OTA_RELEASES_BASE_URL = "https://github.com/maxming2333/esp32-sms-forwarding/releases";
+static const char* const OTA_RELEASES_BASE_URL = "https://github.com/Evansy/esp32-sms-forwarding/releases";
 // OTA 后台任务栈/优先级：
 //   - 12 KiB 栈：HTTPS 下载 + mbedTLS 握手栈占用较高，实测低于此值会爆栈
 //   - 优先级 1：低于 SIM Reader（3），高于 idle，避免抢占短信处理

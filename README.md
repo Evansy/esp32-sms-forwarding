@@ -130,7 +130,7 @@ ESP32-C3 与 ML307R/C/A 通过串口（UART）连接，接线如下：
 
 ### 方式一：图形化烧录（推荐，零安装）
 
-1. 从 [GitHub Releases](https://github.com/maxming2333/esp32-sms-forwarding/releases/latest) 下载最新版固件压缩包，解压获得 `full.bin`
+1. 从 [GitHub Releases](https://github.com/Evansy/esp32-sms-forwarding/releases/latest) 下载最新版固件压缩包，解压获得 `full.bin`
 2. 使用 Chrome 或 Edge 浏览器（88+）打开 [ESPConnect](https://thelastoutpostworkshop.github.io/ESPConnect/)
 3. 波特率选择 `460800`
 4. 点击「连接」，在浏览器弹窗中选择 "USB JTAG/serial debug unit" 设备
@@ -230,7 +230,7 @@ pip install platformio
 **克隆仓库**：
 
 ```bash
-git clone https://github.com/maxming2333/esp32-sms-forwarding.git
+git clone https://github.com/Evansy/esp32-sms-forwarding.git
 cd esp32-sms-forwarding
 ```
 
